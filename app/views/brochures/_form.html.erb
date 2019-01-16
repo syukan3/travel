@@ -1,0 +1,37 @@
+<%= form_with(model: brochure, local: true) do |form| %>
+  <% if brochure.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
+
+      <ul>
+      <% brochure.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :room_id %>
+    <%= form.number_field :room_id %>
+  </div>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :departure %>
+    <%= form.text_field :departure %>
+  </div>
+
+  <div class="field">
+    <%= form.label :arrival %>
+    <%= form.text_field :arrival %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

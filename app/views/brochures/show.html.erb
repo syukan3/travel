@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Room:</strong>
+  <%= @brochure.room_id %>
+</p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @brochure.title %>
+</p>
+
+<p>
+  <strong>Departure:</strong>
+  <%= @brochure.departure %>
+</p>
+
+<p>
+  <strong>Arrival:</strong>
+  <%= @brochure.arrival %>
+</p>
+
+<%= link_to 'Edit', edit_brochure_path(@brochure) %> |
+<%= link_to 'Back', brochures_path %>

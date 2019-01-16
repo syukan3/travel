@@ -10,6 +10,21 @@
   </head>
 
   <body>
+    <% if user_signed_in? %>
+      <br>
+      <%= link_to "トップ", "/" %> |
+      <%= link_to "マイページ", user_path(current_user.id) %> |
+      <%= link_to "プロフィール変更", edit_user_registration_path %> |
+      <%= link_to "ログアウト", destroy_user_session_path	, method: :DELETE %>
+      <div id="login">Logged in as : <strong><%= current_user.email %></strong>.</div>
+
+    <% else %>
+      <br>
+      <%= link_to "ユーザー登録", new_user_registration_path %> |
+      <%= link_to "ログイン", new_user_session_path %>
+      &ensp;&ensp;
+    <% end %>
+    
     <%= yield %>
   </body>
 </html>
