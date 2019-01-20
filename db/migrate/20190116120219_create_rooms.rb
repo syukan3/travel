@@ -3,6 +3,7 @@ class CreateRooms < ActiveRecord::Migration[5.2]
     create_table :rooms do |t|
       t.integer :user_id
       t.integer :member_id
+      t.string :name
 
       t.timestamps
     end

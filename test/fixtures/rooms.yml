@@ -3,7 +3,9 @@
 one:
   user_id: 1
   member_id: 1
+  name: MyString
 
 two:
   user_id: 1
   member_id: 1
+  name: MyString

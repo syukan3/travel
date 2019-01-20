@@ -22,6 +22,16 @@
   </div>
 
   <div class="field">
+    <%= form.label :start_date %>
+    <%= form.date_field :start_date %>
+  </div>
+
+  <div class="field">
+    <%= form.label :end_date %>
+    <%= form.date_field :end_date %>
+  </div>
+
+  <div class="field">
     <%= form.label :departure %>
     <%= form.text_field :departure %>
   </div>
@@ -30,6 +40,9 @@
     <%= form.label :arrival %>
     <%= form.text_field :arrival %>
   </div>
+
+  <%= form.hidden_field :lat, id:"center_lat" %>
+  <%= form.hidden_field :lng, id:"center_lng" %>
 
   <div class="actions">
     <%= form.submit %>
