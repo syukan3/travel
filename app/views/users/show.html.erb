@@ -12,7 +12,6 @@
   <table>
     <thead>
       <tr>
-        <th>Room</th>
         <th>Title</th>
         <th>Start</th>
         <th>End</th>
@@ -25,7 +24,6 @@
     <tbody>
       <% @brochures.each do |brochure| %>
         <tr>
-          <td><%= brochure.room_id %></td>
           <td><%= brochure.title %></td>
           <td><%= brochure.start_date %></td>
           <td><%= brochure.end_date %></td>

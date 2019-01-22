@@ -12,11 +12,6 @@
   <% end %>
 
   <div class="field">
-    <%= form.label :room_id %>
-    <%= form.number_field :room_id %>
-  </div>
-
-  <div class="field">
     <%= form.label :title %>
     <%= form.text_field :title %>
   </div>
@@ -41,8 +36,8 @@
     <%= form.text_field :arrival %>
   </div>
 
-  <%= form.hidden_field :lat, id:"center_lat" %>
-  <%= form.hidden_field :lng, id:"center_lng" %>
+  <!-- <%= form.hidden_field :lat, id:"center_lat" %>
+  <%= form.hidden_field :lng, id:"center_lng" %> -->
 
   <div class="actions">
     <%= form.submit %>

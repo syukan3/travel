@@ -5,7 +5,6 @@
 <table>
   <thead>
     <tr>
-      <th>Room</th>
       <th>Title</th>
       <th>Departure</th>
       <th>Arrival</th>
@@ -16,7 +15,6 @@
   <tbody>
     <% @brochures.each do |brochure| %>
       <tr>
-        <td><%= brochure.room_id %></td>
         <td><%= brochure.title %></td>
         <td><%= brochure.departure %></td>
         <td><%= brochure.arrival %></td>

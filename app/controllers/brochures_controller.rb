@@ -25,12 +25,19 @@ class BrochuresController < ApplicationController
   # POST /brochures.json
   def create
     @brochure = Brochure.new(brochure_params)
-    @room = Room.find_by(id: params[:id])
-    # Room と Member の関連付けができていない。
-    # @brochure.room_id = @room.id
+    @member = Member.new
+    @route = Route.new
 
     respond_to do |format|
       if @brochure.save
+        @member.user_id = current_user.id
+        @member.brochure_id = @brochure.id
+        @member.save
+        @route.brochure_id = @brochure.id
+        @route.save
+        @brochure.member_id = @member.id
+        @brochure.save
+
         format.html { redirect_to @brochure, notice: 'Brochure was successfully created.' }
         format.json { render :show, status: :created, location: @brochure }
       else
@@ -72,6 +79,6 @@ class BrochuresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def brochure_params
-      params.require(:brochure).permit(:room_id, :title, :departure, :arrival, :start_date, :end_date)
+      params.require(:brochure).permit(:title, :departure, :arrival, :start_date, :end_date)
     end
 end
