@@ -33,10 +33,10 @@ class BrochuresController < ApplicationController
         @member.user_id = current_user.id
         @member.brochure_id = @brochure.id
         @member.save
+        # times.each使って、招待者数繰り返す（member.user_id / @member.brochure_id）.
+
         @route.brochure_id = @brochure.id
         @route.save
-        @brochure.member_id = @member.id
-        @brochure.save
 
         format.html { redirect_to @brochure, notice: 'Brochure was successfully created.' }
         format.json { render :show, status: :created, location: @brochure }

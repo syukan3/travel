@@ -6,9 +6,9 @@ function initMap() {
     return;
   }
 
+  // current location
   navigator.geolocation.getCurrentPosition(function(position) {
     var map = new google.maps.Map(document.getElementById('map'), {
-
       center: {
         lat: position.coords.latitude,
         lng: position.coords.longitude
@@ -16,53 +16,47 @@ function initMap() {
       zoom: 15
     });
 
-    var input = document.getElementById('pac-input')
-    var autocomplete = new google.maps.places.Autocomplete(input);
+    // Auto complete
+    var departure = document.getElementById('brochure_departure')
+    var arrival = document.getElementById('brochure_arrival')
+    var sightseeing = document.getElementById('brochure_sightseeing')
+    var autocompleteDep = new google.maps.places.Autocomplete(departure);
+    var autocompleteArr = new google.maps.places.Autocomplete(arrival);
+    var autocompleteSigh = new google.maps.places.Autocomplete(sightseeing);
 
-    autocomplete.bindTo('bounds', map);
+    autocompleteDep.bindTo('bounds', map);
+    autocompleteArr.bindTo('bounds', map);
+    autocompleteSigh.bindTo('bounds', map);
 
-    // Set the data fields to return when the user selects a place.
-    autocomplete.setFields(
-        ['address_components', 'geometry', 'icon', 'name']);
+      // Set the data fields to return when the user selects a place.
+    autocompleteDep.setFields(['address_components', 'geometry', 'icon', 'name']);
+    autocompleteArr.setFields(['address_components', 'geometry', 'icon', 'name']);
+    autocompleteSigh.setFields(['address_components', 'geometry', 'icon', 'name']);
 
-    var geocoder = new google.maps.Geocoder();
+    // Set markers when user inputs forms
 
-    map.addListener( "center_changed", function ( argument ) {
-      var centerPosition = map.getCenter();
-      document.getElementById('center_lat').value = centerPosition.lat();
-      document.getElementById('center_lng').value = centerPosition.lng();
 
-      for (var i = 0; i < markers.length; i++) {
-        markers[i].setMap(null);
-      }
 
-      marker = new google.maps.Marker({
-        position: centerPosition,
-        map: map
+
+    // Set markers when user touches maps
+    map.addListener('click', function(e) {
+      var marker = new google.maps.Marker({
+        position: e.latLng,
+        map: this,
+        animation: google.maps.Animation.DROP
       });
-      markers.push(marker);
-    });
-
-    map.addListener( "dragend", function ( argument ) {
-      var centerPosition = map.getCenter();
-      geocoder.geocode({
-        location: centerPosition
-      }, function(results, status) {
-        if (status !== 'OK') {
-          alert('Failed: ' + status);
-          return;
-        }
-        // results[0].formatted_address
-        if (results[0]) {
-          document.getElementById('center').value = results[0].formatted_address;
-        } else {
-          alert('No results found');
-          return;
-        }
+      // var infoWindow = new google.maps.InfoWindow({
+      //   content: e.latLng.toString() + "<ul><li>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
+      // });
+      var infowindow = new google.maps.InfoWindow();
+      var infowindowContent = document.getElementById('infowindow-content');
+      infowindow.setContent(infowindowContent);
+      marker.addListener('click', function() {
+        infoWindow.open(map, marker);
       });
     });
-  }, function() {
-    alert('Geolocation failed!');
-    return;
+
+
+
   });
 }

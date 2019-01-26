@@ -7,4 +7,6 @@ class User < ApplicationRecord
   has_many :members
   # belongs_to :member, optional: true
 
+  has_many :members
+  has_many :brochures, through: :members
 end

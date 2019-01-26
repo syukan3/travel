@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RoutesControllerTest < ActionDispatch::IntegrationTest
+class SpotsControllerTest < ActionDispatch::IntegrationTest
   # test "the truth" do
   #   assert true
   # end
