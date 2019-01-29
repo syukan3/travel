@@ -10,6 +10,8 @@ class BrochuresController < ApplicationController
   # GET /brochures/1
   # GET /brochures/1.json
   def show
+    @brochure = Brochure.find(params[:id])
+    @days = Day.where(brochure_id: @brochure.id)
   end
 
   # GET /brochures/new
@@ -19,14 +21,19 @@ class BrochuresController < ApplicationController
 
   # GET /brochures/1/edit
   def edit
+    @brochure = Brochure.find(params[:id])
+    @days = Day.where(brochure_id: @brochure.id)
+
   end
 
   # POST /brochures
   # POST /brochures.json
   def create
+    # @brochure = Brochure.new(title: params[:title], departure: params[:departure], arrival: params[:arrival], start_date: params[:start_date], days: days)
     @brochure = Brochure.new(brochure_params)
     @member = Member.new
-    @route = Route.new
+    @day = Day.new
+    @spot = Spot.new
 
     respond_to do |format|
       if @brochure.save
@@ -35,8 +42,12 @@ class BrochuresController < ApplicationController
         @member.save
         # times.each使って、招待者数繰り返す（member.user_id / @member.brochure_id）.
 
-        @route.brochure_id = @brochure.id
-        @route.save
+        @day.brochure_id = @brochure.id
+        @day.start_time = '10:00'
+        @day.save
+
+        @spot.day_id = @day.id
+        @spot.save
 
         format.html { redirect_to @brochure, notice: 'Brochure was successfully created.' }
         format.json { render :show, status: :created, location: @brochure }
@@ -79,6 +90,6 @@ class BrochuresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def brochure_params
-      params.require(:brochure).permit(:title, :departure, :arrival, :start_date, :end_date)
+      params.require(:brochure).permit(:title, :departure, :arrival, :start_date, :duration)
     end
 end

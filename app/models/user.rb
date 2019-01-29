@@ -4,8 +4,6 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   has_many :rooms
-  has_many :members
-  # belongs_to :member, optional: true
 
   has_many :members
   has_many :brochures, through: :members

@@ -3,4 +3,42 @@
 <%= render 'form', brochure: @brochure %>
 
 <%= link_to 'Show', @brochure %> |
+
+
+<br><br>
+
+<h1>スケジュール</h1>
+
+<div class="days">
+  <% n = 1 %>
+  <% @days.each do |day| %>
+    <div class="day">
+      <h3><%= n %> 日目</h3>
+      <p>開始時間 : <%= day.start_time %></p>
+
+      <% m = 1 %>
+      <% day.spots.each do |spot| %>
+        <% if m != 1 %>
+          <div class="time_required">
+            ■ 移動時間 : googleMapで計算する。
+          </div>
+          <br>
+        <% end %>
+        <div class="spot">
+          開始時間 : <%= day.start_time %><br>
+          終了時間 : <%= day.start_time %><br>
+          location : <%= spot.location_name %><br>
+          所要時間 : <%= spot.time_required %><br><br>
+
+        </div>
+        <% m += 1 %>
+      <% end %>
+
+    </div>
+    <% n += 1 %>
+  <% end %>
+
+</div>
+
+
 <%= link_to 'Back', brochures_path %>
