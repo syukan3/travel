@@ -41,10 +41,7 @@ class BrochuresController < ApplicationController
         # times.each使って、招待者数繰り返す（member.user_id / @member.brochure_id）.
 
         brochure_params[:duration].to_i.times.each do |n|
-          # @day.brochure_id = @brochure.id
-          # @day.save
           @day = Day.create(brochure_id: @brochure.id, start_time: @brochure.start_date + 60*60*10 + 60*60*24*n)
-
         end
 
         @spot.day_id = @day.id

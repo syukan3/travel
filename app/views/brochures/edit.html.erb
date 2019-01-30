@@ -26,10 +26,12 @@
   <h1>スケジュール</h1>
 
   <div class="days">
+    <%= link_to "１日追加", brochure_days_path(@brochure) , method: :post %><br><br>
     <% n = 1 %>
     <% @days.each do |day| %>
       <div class="day">
-        <h3><%= n %> 日目 （）</h3>
+        <h3 style="display:inline;"><%= n %> 日目 （）</h3>
+        <%= link_to 'Destroy', brochure_day_path(@brochure, day), method: :delete, data: { confirm: 'Are you sure?' } %>
         <p>開始時間 : <%= day.start_time %></p>
 
         <% m = 1 %>
@@ -44,11 +46,13 @@
             開始時間 : <%= day.start_time %><br>
             終了時間 : <%= day.start_time %><br>
             location : <%= spot.location_name %><br>
-            所要時間 : <%= spot.time_required %><br><br>
+            所要時間 : <%= spot.time_required %><br>
+            <%= link_to "行かない", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br><br>
 
           </div>
           <% m += 1 %>
         <% end %>
+        <%= link_to "+ いきたい場所", brochure_day_spots_path(@brochure, day) , method: :post %><br><br>
 
       </div>
       <% n += 1 %>
