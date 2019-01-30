@@ -1,4 +1,10 @@
 
+function setDeparture(lat, lng) {
+  console.log(lat);
+  console.log(lng);
+
+}
+
 var markers = [];
 function initMap() {
   if (!navigator.geolocation) {
@@ -15,6 +21,8 @@ function initMap() {
       },
       zoom: 15
     });
+    var departureMarker = null;
+    var arrivalMarker = null;
 
     // Auto complete
     var departure = document.getElementById('brochure_departure')
@@ -42,12 +50,12 @@ function initMap() {
     map.addListener('click', function(e) {
       var marker = new google.maps.Marker({
         position: e.latLng,
-        map: this,
+        map: map,
         animation: google.maps.Animation.DROP
       });
-
       var infoWindow = new google.maps.InfoWindow({
-        content: e.latLng.toString() + "<ul><li>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
+        // content: e.latLng.toString() + "<ul><li onclick='setDeparture(place)'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
+        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
       });
       // var infowindow = new google.maps.InfoWindow();
       // var infowindowContent = document.getElementById('infowindow-content');
@@ -59,42 +67,65 @@ function initMap() {
 
     autocompleteDep.addListener('place_changed', function() {
       var place = autocompleteDep.getPlace();
-      console.log(place.geometry.location);
-      var marker = new google.maps.Marker({
-        position: place.geometry.location,
-        map: this,
-        animation: google.maps.Animation.DROP
-      });
       if (!place.geometry) {
-        // User entered the name of a Place that was not suggested and
-        // pressed the Enter key, or the Place Details request failed.
         window.alert("No details available for input: '" + place.name + "'");
         return;
       }
-
-      // If the place has a geometry, then present it on a map.
+      if (!!departureMarker) {
+        departureMarker.setMap(null);
+      }
+      departureMarker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        animation: google.maps.Animation.DROP
+      });
       if (place.geometry.viewport) {
         map.fitBounds(place.geometry.viewport);
       } else {
         map.setCenter(place.geometry.location);
-        map.setZoom(17);  // Why 17? Because it looks good.
+        map.setZoom(15);  // Why 17? Because it looks good.
       }
-      marker.setPosition(place.geometry.location);
-      marker.setVisible(true);
-      var address = '';
-  if (place.address_components) {
-    address = [
-      (place.address_components[0] && place.address_components[0].short_name || ''),
-      (place.address_components[1] && place.address_components[1].short_name || ''),
-      (place.address_components[2] && place.address_components[2].short_name || '')
-    ].join(' ');
-  }
+    });
 
-  infowindowContent.children['place-icon'].src = place.icon;
-  infowindowContent.children['place-name'].textContent = place.name;
-  infowindowContent.children['place-address'].textContent = address;
-  infowindow.open(map, marker);
-        });
+    autocompleteArr.addListener('place_changed', function() {
+      var place = autocompleteArr.getPlace();
+      if (!place.geometry) {
+        window.alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      if (!!arrivalMarker) {
+        arrivalMarker.setMap(null);
+      }
+      arrivalMarker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        animation: google.maps.Animation.DROP
+      });
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);  // Why 17? Because it looks good.
+      }
+    });
 
+    autocompleteSigh.addListener('place_changed', function() {
+      var place = autocompleteSigh.getPlace();
+      if (!place.geometry) {
+        window.alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      var marker = new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        animation: google.maps.Animation.DROP
+      });
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);  // Why 17? Because it looks good.
+      }
+    });
   });
 }

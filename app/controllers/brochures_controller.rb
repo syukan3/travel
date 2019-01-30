@@ -11,7 +11,7 @@ class BrochuresController < ApplicationController
   # GET /brochures/1.json
   def show
     @brochure = Brochure.find(params[:id])
-    @days = Day.where(brochure_id: @brochure.id)
+    @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
   end
 
   # GET /brochures/new
@@ -22,17 +22,15 @@ class BrochuresController < ApplicationController
   # GET /brochures/1/edit
   def edit
     @brochure = Brochure.find(params[:id])
-    @days = Day.where(brochure_id: @brochure.id)
+    @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
 
   end
 
   # POST /brochures
   # POST /brochures.json
   def create
-    # @brochure = Brochure.new(title: params[:title], departure: params[:departure], arrival: params[:arrival], start_date: params[:start_date], days: days)
     @brochure = Brochure.new(brochure_params)
     @member = Member.new
-    @day = Day.new
     @spot = Spot.new
 
     respond_to do |format|
@@ -42,9 +40,12 @@ class BrochuresController < ApplicationController
         @member.save
         # times.each使って、招待者数繰り返す（member.user_id / @member.brochure_id）.
 
-        @day.brochure_id = @brochure.id
-        @day.start_time = '10:00'
-        @day.save
+        brochure_params[:duration].to_i.times.each do |n|
+          # @day.brochure_id = @brochure.id
+          # @day.save
+          @day = Day.create(brochure_id: @brochure.id, start_time: @brochure.start_date + 60*60*10 + 60*60*24*n)
+
+        end
 
         @spot.day_id = @day.id
         @spot.save
@@ -62,7 +63,24 @@ class BrochuresController < ApplicationController
   # PATCH/PUT /brochures/1.json
   def update
     respond_to do |format|
+      original_days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
+      n = 0
+      diff = []
+      original_days.each do |original_day|
+        date = original_day.start_time.to_date
+        diff[n] = original_day.start_time - date.to_datetime
+        n = n + 1
+      end
+
       if @brochure.update(brochure_params)
+        @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
+        n = 0
+        @days.each do |day|
+          day.start_time = @brochure.start_date + diff[n] + 60*60*24*n
+          day.save
+          n = n + 1
+        end
+
         format.html { redirect_to @brochure, notice: 'Brochure was successfully updated.' }
         format.json { render :show, status: :ok, location: @brochure }
       else

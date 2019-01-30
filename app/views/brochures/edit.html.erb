@@ -1,44 +1,97 @@
 <h1>Editing Brochure</h1>
 
-<%= render 'form', brochure: @brochure %>
+<%= form_with(model: @brochure, local: true) do |form| %>
+  <% if @brochure.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
+
+      <ul>
+      <% brochure.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div class="field">
+    <%= form.label :start_date %>
+    <%= form.date_field :start_date %>
+  </div>
+
+  <h1>スケジュール</h1>
+
+  <div class="days">
+    <% n = 1 %>
+    <% @days.each do |day| %>
+      <div class="day">
+        <h3><%= n %> 日目 （）</h3>
+        <p>開始時間 : <%= day.start_time %></p>
+
+        <% m = 1 %>
+        <% day.spots.each do |spot| %>
+          <% if m != 1 %>
+            <div class="time_required">
+              ■ 移動時間 : googleMapで計算する。
+            </div>
+            <br>
+          <% end %>
+          <div class="spot">
+            開始時間 : <%= day.start_time %><br>
+            終了時間 : <%= day.start_time %><br>
+            location : <%= spot.location_name %><br>
+            所要時間 : <%= spot.time_required %><br><br>
+
+          </div>
+          <% m += 1 %>
+        <% end %>
+
+      </div>
+      <% n += 1 %>
+    <% end %>
+
+  </div>
+
+  <div class="field">
+    <%= form.label :sightseeing %>
+    <%= form.text_field :sightseeing %>
+  </div>
+
+
+  <!-- <%= form.hidden_field :lat, id:"center_lat" %>
+  <%= form.hidden_field :lng, id:"center_lng" %> -->
+
+  <br>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+
+
+
+  <div id="map"></div>
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
+      async defer></script>
+
+  <div id="infowindow-content">
+    <img src="" width="16" height="16" id="place-icon">
+    <span id="place-name"  class="title"></span><br>
+    <span id="place-address"></span>
+  </div>
+
+<% end %>
 
 <%= link_to 'Show', @brochure %> |
 
 
 <br><br>
 
-<h1>スケジュール</h1>
 
-<div class="days">
-  <% n = 1 %>
-  <% @days.each do |day| %>
-    <div class="day">
-      <h3><%= n %> 日目</h3>
-      <p>開始時間 : <%= day.start_time %></p>
-
-      <% m = 1 %>
-      <% day.spots.each do |spot| %>
-        <% if m != 1 %>
-          <div class="time_required">
-            ■ 移動時間 : googleMapで計算する。
-          </div>
-          <br>
-        <% end %>
-        <div class="spot">
-          開始時間 : <%= day.start_time %><br>
-          終了時間 : <%= day.start_time %><br>
-          location : <%= spot.location_name %><br>
-          所要時間 : <%= spot.time_required %><br><br>
-
-        </div>
-        <% m += 1 %>
-      <% end %>
-
-    </div>
-    <% n += 1 %>
-  <% end %>
-
-</div>
 
 
 <%= link_to 'Back', brochures_path %>
