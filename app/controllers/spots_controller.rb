@@ -1,5 +1,5 @@
 class SpotsController < ApplicationController
-  before_action :set_spot, only: [:destroy]
+  before_action :set_spot, only: [:destroy, :update]
 
   def create
     @day = Day.find_by(id: params[:day_id])

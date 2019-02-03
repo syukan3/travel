@@ -1,9 +1,21 @@
 
+$.ajax({
+  url: "https://maps.googleapis.com/maps/api/directions/json?origin=%E6%9D%B1%E4%BA%AC%E9%A7%85&destination=%E3%82%B9%E3%82%AB%E3%82%A4%E3%83%84%E3%83%AA%E3%83%BC&mode=walking&key=AIzaSyAmGfLiIHAbUNiquaRUxOR3DkVrbPeGLPI",
+  cache: false,
+  success: function(response){
+    console.log(response)
+  }
+});
+
+
 function setDeparture(lat, lng) {
   console.log(lat);
   console.log(lng);
 
 }
+
+
+
 
 var markers = [];
 function initMap() {

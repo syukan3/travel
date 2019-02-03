@@ -20,13 +20,15 @@ class DaysController < ApplicationController
   def destroy
     original_days = Day.where(brochure_id: params[:brochure_id]).order(start_time: :asc)
     n = 0
+    m = 0
     diff = []
     original_days.each do |original_day|
-      if @day.start_time < original_day.start_time then
+      if @day.start_time <= original_day.start_time then
         date = original_day.start_time.to_date
         diff[n] = original_day.start_time - date.to_datetime
         n = n + 1
       else
+        m = m + 1
         next
       end
     end
@@ -39,8 +41,8 @@ class DaysController < ApplicationController
 
     n = 0
     @days.each do |day|
-      if @day.start_time < day.start_time then
-        day.start_time = @brochure.start_date + diff[n] + 60*60*24*n
+      if @day.start_time <= day.start_time then
+        day.start_time = @brochure.start_date + diff[n + m] + 60*60*24*(n + m)
         day.save
         n = n + 1
       else
