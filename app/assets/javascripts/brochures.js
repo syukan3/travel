@@ -1,20 +1,8 @@
 
-$.ajax({
-  url: "https://maps.googleapis.com/maps/api/directions/json?origin=%E6%9D%B1%E4%BA%AC%E9%A7%85&destination=%E3%82%B9%E3%82%AB%E3%82%A4%E3%83%84%E3%83%AA%E3%83%BC&mode=walking&key=AIzaSyAmGfLiIHAbUNiquaRUxOR3DkVrbPeGLPI",
-  cache: false,
-  success: function(response){
-    console.log(response)
-  }
-});
-
-
 function setDeparture(lat, lng) {
   console.log(lat);
   console.log(lng);
-
 }
-
-
 
 
 var markers = [];
@@ -40,18 +28,22 @@ function initMap() {
     var departure = document.getElementById('brochure_departure')
     var arrival = document.getElementById('brochure_arrival')
     var sightseeing = document.getElementById('brochure_sightseeing')
+    var spot = document.getElementById('spot')
     var autocompleteDep = new google.maps.places.Autocomplete(departure);
     var autocompleteArr = new google.maps.places.Autocomplete(arrival);
     var autocompleteSigh = new google.maps.places.Autocomplete(sightseeing);
+    var autocompleteSpot = new google.maps.places.Autocomplete(spot);
 
     autocompleteDep.bindTo('bounds', map);
     autocompleteArr.bindTo('bounds', map);
     autocompleteSigh.bindTo('bounds', map);
+    autocompleteSpot.bindTo('bounds', map);
 
       // Set the data fields to return when the user selects a place.
     autocompleteDep.setFields(['address_components', 'geometry', 'icon', 'name']);
     autocompleteArr.setFields(['address_components', 'geometry', 'icon', 'name']);
     autocompleteSigh.setFields(['address_components', 'geometry', 'icon', 'name']);
+    autocompleteSpot.setFields(['address_components', 'geometry', 'icon', 'name']);
 
     // Set markers when user inputs forms
 

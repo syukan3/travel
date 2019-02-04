@@ -53,28 +53,30 @@
       <p>開始時間 : <%= day.start_time %></p>
 
       <% m = 1 %>
-      <% day.spots.each do |spot| %>
-        <div class="time_required">
-          <% if m != 1 %>
-              ■ 移動時間 : googleMapで計算する。
-            <br><br>
-          <% end %>
-        </div>
-        <div class="spot field">
-          <%= form_with(model: @spot, local: true) do |form| %>
+      <%= form_with(model: @spot, local: true) do |form| %>
+        <% day.spots.each do |spot| %>
+          <div class="time_required">
+            <% if m != 1 %>
+                ■ 移動時間 : googleMapで計算する。
+              <br><br>
+            <% end %>
+          </div>
+          <div class="spot field">
             順番 : <%= spot.numbering %><br>
             開始時間 : <%= day.start_time %><br>
             終了時間 : <%= day.start_time %><br>
             location : <%= spot.location_name %><br>
             所要時間 : <%= form.number_field :stay_time %><br>
             <%= link_to "更新", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br>
-            <%= link_to "行かない", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br><br>
-          <% end %>
-        </div>
-        <% m += 1 %>
+            <%= link_to "行かない", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br>
+          </div>
+          <% m += 1 %>
+        <% end %>
+        <%= form.text_field :spot %>
+        <!-- <%= link_to "+ いきたい場所", brochure_day_spots_path(@brochure, day) , method: :post %> -->
+        <%= link_to "+ いきたい場所", brochure_day_spots_path(@brochure, day) , method: :post %>
+        <div class="actions"><%= form.submit "+ いきたい場所" %></div><br><br><br>
       <% end %>
-      <%= link_to "+ いきたい場所", brochure_day_spots_path(@brochure, day) , method: :post %><br><br>
-
     </div>
     <% @n += 1 %>
   <% end %>

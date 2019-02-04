@@ -23,7 +23,7 @@ class DaysController < ApplicationController
     m = 0
     diff = []
     original_days.each do |original_day|
-      if @day.start_time <= original_day.start_time then
+      if @day.start_time < original_day.start_time then
         date = original_day.start_time.to_date
         diff[n] = original_day.start_time - date.to_datetime
         n = n + 1
@@ -34,16 +34,17 @@ class DaysController < ApplicationController
     end
 
     @day.destroy
-    @days = Day.where(brochure_id: params[:brochure_id]).order(start_time: :asc)
+    days = Day.where(brochure_id: params[:brochure_id]).order(start_time: :asc)
     @brochure = Brochure.find_by(id: params[:brochure_id])
     @brochure.duration -= 1
     @brochure.save
 
     n = 0
-    @days.each do |day|
-      if @day.start_time <= day.start_time then
-        day.start_time = @brochure.start_date + diff[n + m] + 60*60*24*(n + m)
+    days.each do |day|
+      if @day.start_time < day.start_time then
+        day.start_time = @brochure.start_date + diff[n] + 60*60*24*(m-1)
         day.save
+        m = m + 1
         n = n + 1
       else
         next
