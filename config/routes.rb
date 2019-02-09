@@ -6,8 +6,8 @@ Rails.application.routes.draw do
 
   resources :users, only: %i(show)
   resources :brochures, only: %i(index create new update edit destroy show) do
-    resources :days, only: %i(create update destroy) do
-      resources :spots, only: %i(create update destroy)
+    resources :days, only: %i(create update edit destroy) do
+      resources :spots, only: %i(create update edit destroy)
     end
   end
 

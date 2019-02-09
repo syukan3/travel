@@ -24,6 +24,35 @@ function initMap() {
     var departureMarker = null;
     var arrivalMarker = null;
 
+    // Directions Service
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    directionsDisplay.setMap(map);
+    var onChangeHandler = function() {
+      calculateAndDisplayRoute(directionsService, directionsDisplay);
+    };
+    document.getElementById('brochure_departure').addEventListener('change', onChangeHandler);
+    document.getElementById('brochure_arrival').addEventListener('change', onChangeHandler);
+
+    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+      directionsService.route({
+        origin: document.getElementById('brochure_departure').value,
+        destination: document.getElementById('brochure_arrival').value,
+        travelMode: 'DRIVING'
+      }, function(response, status) {
+        if (status === 'OK') {
+          directionsDisplay.setDirections(response);
+        }
+        // } else if (departure === null || arrival === null) {
+        //   console.log("NG")
+        //   continue;
+        // }
+        // else {
+          // window.alert('Directions request failed due to ' + status);
+        // }
+      });
+    }
+
     // Auto complete
     var departure = document.getElementById('brochure_departure')
     var arrival = document.getElementById('brochure_arrival')

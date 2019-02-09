@@ -47,11 +47,11 @@ class BrochuresController < ApplicationController
         @spot.day_id = @day.id
         @spot.save
 
-        format.html { redirect_to @brochure, notice: 'Brochure was successfully created.' }
+        format.html { redirect_to edit_brochure_path(@brochure), notice: 'Brochure was successfully created.' }
         format.json { render :show, status: :created, location: @brochure }
       else
         format.html { render :new }
-        format.json { render json: @brochure.errors, status: :unprocessable_entity }
+        format.json { render json: edit_brochure_path(@brochure).errors, status: :unprocessable_entity }
       end
     end
   end

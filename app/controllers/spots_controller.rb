@@ -1,12 +1,12 @@
 class SpotsController < ApplicationController
-  before_action :set_spot, only: [:destroy, :update]
+  before_action :set_spot, only: [:destroy, :update, :edit]
 
   def create
     @day = Day.find_by(id: params[:day_id])
     @brochure = Brochure.find_by(id: @day.brochure_id)
 
     # ↓ AutoComplete から location_name/time_required/lat/lng を params で受け取る。
-    @spot = Spot.create(day_id: params[:day_id])
+    @spot = Spot.new(day_id: @day.id, location_name: params[:spot], stay_time: 60)
     if @spot.save
       redirect_to(edit_brochure_path(@brochure))
     else
@@ -14,15 +14,22 @@ class SpotsController < ApplicationController
     end
   end
 
-  def update
+  def edit
+    @spot = Spot.find_by(id: params[:id])
+    @day = Day.find_by(id: params[:day_id])
+    @brochure = Brochure.find_by(id: @day.brochure_id)
 
+  end
+
+  def update
+    @brochure = Brochure.find_by(id: @spot.day.brochure_id)
     respond_to do |format|
-      if @spot.update_attributes(params[:spot])
-        format.html { redirect_to @spot, notice: 'Spot was successfully updated.' }
+      if @spot.update_attributes(spot_params)
+        format.html { redirect_to edit_brochure_path(@brochure), notice: 'Spot was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }
-        format.json { render json: @spot.errors, status: :unprocessable_entity }
+        format.json { render json: edit_brochure_path(@brochure).errors, status: :unprocessable_entity }
       end
     end
   end
@@ -45,7 +52,7 @@ class SpotsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def spot_params
-      params.require(:spot).permit(:location_name, :numbering, :lat, :lng, :time_required)
+      params.require(:spot).permit(:location_name, :numbering, :lat, :lng, :stay_time)
     end
 
 end

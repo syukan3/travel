@@ -36,7 +36,6 @@ ActiveRecord::Schema.define(version: 2019_02_03_024541) do
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "brochure_id"
   end
 
   create_table "spots", force: :cascade do |t|

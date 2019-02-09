@@ -27,7 +27,7 @@
         <tr>
           <td><%= brochure.title %></td>
           <td><%= brochure.start_date %></td>
-          <td>later</td>
+          <td><%= brochure.start_date + 60*60*24*(brochure.duration-1) %></td>
           <td><%= brochure.duration %></td>
           <td><%= brochure.departure %></td>
           <td><%= brochure.arrival %></td>

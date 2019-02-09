@@ -1,5 +1,5 @@
 class DaysController < ApplicationController
-  before_action :set_day, only: [:destroy]
+  before_action :set_day, only: [:destroy, :update, :edit]
 
   def create
     @brochure = Brochure.find_by(id: params[:brochure_id])
@@ -13,8 +13,23 @@ class DaysController < ApplicationController
     end
   end
 
-  def update
+  def edit
+    @day = Day.find_by(id: params[:id])
+    @brochure = Brochure.find_by(id: @day.brochure_id)
 
+  end
+
+  def update
+    @brochure = Brochure.find_by(id: @day.brochure_id)
+    respond_to do |format|
+      if @day.update_attributes(day_params)
+        format.html { redirect_to edit_brochure_path(@brochure), notice: 'Spot was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: edit_brochure_path(@brochure).errors, status: :unprocessable_entity }
+      end
+    end
   end
 
   def destroy
