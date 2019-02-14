@@ -21,57 +21,45 @@ function initMap() {
       },
       zoom: 15
     });
-    var departureMarker = null;
-    var arrivalMarker = null;
+
+    // var departureMarker = null;
+    // var arrivalMarker = null;
 
     // Directions Service
-    var directionsService = new google.maps.DirectionsService;
-    var directionsDisplay = new google.maps.DirectionsRenderer;
-    directionsDisplay.setMap(map);
-    var onChangeHandler = function() {
-      calculateAndDisplayRoute(directionsService, directionsDisplay);
-    };
-    document.getElementById('brochure_departure').addEventListener('change', onChangeHandler);
-    document.getElementById('brochure_arrival').addEventListener('change', onChangeHandler);
-
-    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-      directionsService.route({
-        origin: document.getElementById('brochure_departure').value,
-        destination: document.getElementById('brochure_arrival').value,
-        travelMode: 'DRIVING'
-      }, function(response, status) {
-        if (status === 'OK') {
-          directionsDisplay.setDirections(response);
-        }
-        // } else if (departure === null || arrival === null) {
-        //   console.log("NG")
-        //   continue;
-        // }
-        // else {
-          // window.alert('Directions request failed due to ' + status);
-        // }
-      });
-    }
+    // var directionsService = new google.maps.DirectionsService;
+    // var directionsDisplay = new google.maps.DirectionsRenderer;
+    // directionsDisplay.setMap(map);
+    // var onChangeHandler = function() {
+    //   calculateAndDisplayRoute(directionsService, directionsDisplay);
+    // };
+    // document.getElementById('brochure_departure').addEventListener('change', onChangeHandler);
+    // document.getElementById('brochure_arrival').addEventListener('change', onChangeHandler);
+    //
+    // function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+    //   directionsService.route({
+    //     origin: document.getElementById('brochure_departure').value,
+    //     destination: document.getElementById('brochure_arrival').value,
+    //     travelMode: 'DRIVING'
+    //   }, function(response, status) {
+    //     if (status === 'OK') {
+    //       directionsDisplay.setDirections(response);
+    //     }
+    //     } else if (departure === null || arrival === null) {
+    //       console.log("NG")
+    //       continue;
+    //     }
+    //     else {
+    //       window.alert('Directions request failed due to ' + status);
+    //     }
+    //   });
+    // }
 
     // Auto complete
-    var departure = document.getElementById('brochure_departure')
-    var arrival = document.getElementById('brochure_arrival')
-    var sightseeing = document.getElementById('brochure_sightseeing')
     var spot = document.getElementById('spot')
-    var autocompleteDep = new google.maps.places.Autocomplete(departure);
-    var autocompleteArr = new google.maps.places.Autocomplete(arrival);
-    var autocompleteSigh = new google.maps.places.Autocomplete(sightseeing);
     var autocompleteSpot = new google.maps.places.Autocomplete(spot);
-
-    autocompleteDep.bindTo('bounds', map);
-    autocompleteArr.bindTo('bounds', map);
-    autocompleteSigh.bindTo('bounds', map);
     autocompleteSpot.bindTo('bounds', map);
 
       // Set the data fields to return when the user selects a place.
-    autocompleteDep.setFields(['address_components', 'geometry', 'icon', 'name']);
-    autocompleteArr.setFields(['address_components', 'geometry', 'icon', 'name']);
-    autocompleteSigh.setFields(['address_components', 'geometry', 'icon', 'name']);
     autocompleteSpot.setFields(['address_components', 'geometry', 'icon', 'name']);
 
     // Set markers when user inputs forms
@@ -88,7 +76,7 @@ function initMap() {
       });
       var infoWindow = new google.maps.InfoWindow({
         // content: e.latLng.toString() + "<ul><li onclick='setDeparture(place)'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
-        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
+        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>出発地</li><li>いきたい場所</li><li>マーカーを外す</li></ul>"
       });
       // var infowindow = new google.maps.InfoWindow();
       // var infowindowContent = document.getElementById('infowindow-content');
@@ -98,52 +86,10 @@ function initMap() {
       });
     });
 
-    autocompleteDep.addListener('place_changed', function() {
-      var place = autocompleteDep.getPlace();
-      if (!place.geometry) {
-        window.alert("No details available for input: '" + place.name + "'");
-        return;
-      }
-      if (!!departureMarker) {
-        departureMarker.setMap(null);
-      }
-      departureMarker = new google.maps.Marker({
-        position: place.geometry.location,
-        map: map,
-        animation: google.maps.Animation.DROP
-      });
-      if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
-      } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);  // Why 17? Because it looks good.
-      }
-    });
-
-    autocompleteArr.addListener('place_changed', function() {
-      var place = autocompleteArr.getPlace();
-      if (!place.geometry) {
-        window.alert("No details available for input: '" + place.name + "'");
-        return;
-      }
-      if (!!arrivalMarker) {
-        arrivalMarker.setMap(null);
-      }
-      arrivalMarker = new google.maps.Marker({
-        position: place.geometry.location,
-        map: map,
-        animation: google.maps.Animation.DROP
-      });
-      if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
-      } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(15);  // Why 17? Because it looks good.
-      }
-    });
-
-    autocompleteSigh.addListener('place_changed', function() {
-      var place = autocompleteSigh.getPlace();
+    autocompleteSpot.addListener('place_changed', function() {
+      var place = autocompleteSpot.getPlace();
+      document.getElementById('spot_lat').value = place.geometry.location.lat();
+      document.getElementById('spot_lng').value = place.geometry.location.lng();
       if (!place.geometry) {
         window.alert("No details available for input: '" + place.name + "'");
         return;

@@ -4,8 +4,8 @@ class DaysController < ApplicationController
   def create
     @brochure = Brochure.find_by(id: params[:brochure_id])
     @day = Day.create(brochure_id: params[:brochure_id], start_time: @brochure.start_date + 60*60*10 + 60*60*24*@brochure.duration)
-    @brochure.duration += 1
     if @day.save
+      @brochure.duration += 1
       @brochure.save
       redirect_to(edit_brochure_path(@brochure))
     else
@@ -20,9 +20,12 @@ class DaysController < ApplicationController
   end
 
   def update
+    def hour_check(input)
+      array = input.split(":")
+    end
     @brochure = Brochure.find_by(id: @day.brochure_id)
     respond_to do |format|
-      if @day.update_attributes(day_params)
+      if @day.update(start_time: @day.start_time.change(hour: hour_check(day_params[:start_time])[0].to_i, min: hour_check(day_params[:start_time])[1].to_i))
         format.html { redirect_to edit_brochure_path(@brochure), notice: 'Spot was successfully updated.' }
         format.json { head :no_content }
       else

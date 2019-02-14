@@ -4,13 +4,15 @@ class SpotsController < ApplicationController
   def create
     @day = Day.find_by(id: params[:day_id])
     @brochure = Brochure.find_by(id: @day.brochure_id)
+    spots = Spot.where(day_id: @day.id)
 
     # ↓ AutoComplete から location_name/time_required/lat/lng を params で受け取る。
-    @spot = Spot.new(day_id: @day.id, location_name: params[:spot], stay_time: 60)
+    @spot = Spot.new(day_id: @day.id, location_name: params[:spot], stay_time: 60, numbering: spots.count+1, lat: params[:lat], lng: params[:lng])
     if @spot.save
       redirect_to(edit_brochure_path(@brochure))
     else
-      render(edit_brochure_path(@brochure))
+      format.html { render action: "edit" }
+      format.json { render json: edit_brochure_path(@brochure).errors, status: :unprocessable_entity }
     end
   end
 
@@ -18,6 +20,7 @@ class SpotsController < ApplicationController
     @spot = Spot.find_by(id: params[:id])
     @day = Day.find_by(id: params[:day_id])
     @brochure = Brochure.find_by(id: @day.brochure_id)
+
 
   end
 
@@ -38,6 +41,11 @@ class SpotsController < ApplicationController
     @day = Day.find_by(id: params[:day_id])
     @brochure = Brochure.find_by(id: @day.brochure_id)
     @spot.destroy
+    spots = Spot.where(day_id: @day.id).order(numbering: :asc)
+    spots.each.with_index do |spot, num|
+      spot.numbering = num + 1
+      spot.save
+    end
     respond_to do |format|
       format.html { redirect_to edit_brochure_path(@brochure), notice: 'Spot was successfully destroyed.' }
       format.json { head :no_content }

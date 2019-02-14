@@ -7,22 +7,12 @@
 
 <p>
   <strong>Start date:</strong>
-  <%= @brochure.start_date %>
+  <%= @brochure.start_date.to_date %> 〜 <%= (@brochure.start_date + 60*60*24*(@brochure.duration-1)).to_date %>
 </p>
 
 <p>
   <strong>Number of days:</strong>
   <%= @brochure.duration %>
-</p>
-
-<p>
-  <strong>Departure:</strong>
-  <%= @brochure.departure %>
-</p>
-
-<p>
-  <strong>Arrival:</strong>
-  <%= @brochure.arrival %>
 </p>
 
 <br><br>
