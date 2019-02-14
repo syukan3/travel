@@ -25,28 +25,29 @@ class BrochuresController < ApplicationController
     @brochure = Brochure.find(params[:id])
     @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
     @durations = Array.new().map{Array.new()}
-    # @durations[0] = [13, 23]
+    @durations[0] = [13, 23]
 
     # くりかえし、days/spotsで２重ループ、requestかえってくる順番を考慮する。
-    # base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + "35.681236" + "," + "139.767125" + "&destination=35.658581,139.745433&mode=walking&key=" + Rails.application.credentials.google_map_key
-    # client = HTTPClient.new()
-    # response = client.get(base_url)
-    # @durations[0].push(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i)
+    # base_url="https://maps.googleapis.com/maps/api/directions/json?origin=35.681236,139.767125&destination=35.658581,139.745433&mode=walking&key=AIzaSyAmGfLiIHAbUNiquaRUxOR3DkVrbPeGLPI"
+    base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + "35.681236" + "," + "139.767125" + "&destination=" + "35.658581" + "," + "139.745433" + "&mode=walking&key=" + Rails.application.credentials.google_map_key
+    client = HTTPClient.new()
+    response = client.get(base_url)
+    @durations[0].push(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i)
 
-    @days.each.with_index do |day, n|
-      spots = Spot.where(day_id: day.id).order(numbering: :asc)
-      spots.each.with_index do |spot, num|
-        if num != 0 then
-          base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + last_spot.lat.to_s + "," + last_spot.lng.to_s + "&destination=" + spot.lat.to_s + "," + spot.lng.to_s + "&mode=walking&key=" + Rails.application.credentials.google_map_key
-          client = HTTPClient.new()
-          response = client.get(base_url)
-          @durations[n][num-1].push(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i)
-          last_spot = Spot.find_by(id: spot.id)
-        else
-          last_spot = Spot.find_by(id: spot.id)
-        end
-      end
-    end
+    # @days.each.with_index do |day, n|
+    #   spots = Spot.where(day_id: day.id).order(numbering: :asc)
+    #   spots.each.with_index do |spot, num|
+    #     if num != 0 then
+    #       base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + last_spot.lat.to_s + "," + last_spot.lng.to_s + "&destination=" + spot.lat.to_s + "," + spot.lng.to_s + "&mode=walking&key=" + Rails.application.credentials.google_map_key
+    #       client = HTTPClient.new()
+    #       response = client.get(base_url)
+    #       @durations[n][num-1].push(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i)
+    #       last_spot = Spot.find_by(id: spot.id)
+    #     else
+    #       last_spot = Spot.find_by(id: spot.id)
+    #     end
+    #   end
+    # end
   end
 
   # POST /brochures
