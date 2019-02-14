@@ -76,7 +76,7 @@ function initMap() {
       });
       var infoWindow = new google.maps.InfoWindow({
         // content: e.latLng.toString() + "<ul><li onclick='setDeparture(place)'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
-        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>出発地</li><li>いきたい場所</li><li>マーカーを外す</li></ul>"
+        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>いきたい場所</li><li>マーカーを外す</li></ul>"
       });
       // var infowindow = new google.maps.InfoWindow();
       // var infowindowContent = document.getElementById('infowindow-content');
