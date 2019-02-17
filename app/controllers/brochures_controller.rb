@@ -13,17 +13,6 @@ class BrochuresController < ApplicationController
   def show
     @brochure = Brochure.find(params[:id])
     @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
-  end
-
-  # GET /brochures/new
-  def new
-    @brochure = Brochure.new
-  end
-
-  # GET /brochures/1/edit
-  def edit
-    @brochure = Brochure.find(params[:id])
-    @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
     @durations = Array.new(@days.length)
 
     @days.each.with_index do |day, n|
@@ -40,6 +29,49 @@ class BrochuresController < ApplicationController
           client = HTTPClient.new()
           response = client.get(base_url)
           @durations[n][num-1] = JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i
+          last_spot = Spot.find_by(id: spot.id)
+        else
+          last_spot = Spot.find_by(id: spot.id)
+        end
+      end
+    end
+  end
+
+  # GET /brochures/new
+  def new
+    @brochure = Brochure.new
+  end
+
+  # GET /brochures/1/edit
+  def edit
+    @brochure = Brochure.find(params[:id])
+    @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
+    @durations = Array.new(@days.length)
+
+    def min_changer(input)
+      if input.length == 2 then
+        result = input[0].to_i
+        return result
+      elsif input.length == 4
+        result = input[0].to_i * 60 + input[2].to_i
+        return result
+      end
+    end
+
+    @days.each.with_index do |day, n|
+      spots = Spot.where(day_id: day.id).order(numbering: :asc)
+      last_spot = nil
+
+      if spots.length-1 > 0
+        @durations[n] = Array.new(spots.length-1)
+      end
+
+      spots.each.with_index do |spot, num|
+        if num != 0 then
+          base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + last_spot.lat.to_s + "," + last_spot.lng.to_s + "&destination=" + spot.lat.to_s + "," + spot.lng.to_s + "&mode=driving&key=" + Rails.application.credentials.google_map_key
+          client = HTTPClient.new()
+          response = client.get(base_url)
+          @durations[n][num-1] = min_changer(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split)
           last_spot = Spot.find_by(id: spot.id)
         else
           last_spot = Spot.find_by(id: spot.id)

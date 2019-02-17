@@ -20,32 +20,33 @@
 <h1>スケジュール</h1>
 
 <div class="days">
-  <% n = 1 %>
-  <% @days.each do |day| %>
+  <% next_time = [] %>
+  <% @days.each.with_index do |day, n| %>
     <div class="day">
-      <h3><%= n %> 日目</h3>
+      <h3 style="display:inline;"><%= n+1 %> 日目 </h3>
       <p>開始時間 : <%= day.start_time %></p>
-
-      <% m = 1 %>
-      <% day.spots.each do |spot| %>
-        <% if m != 1 %>
-          <div class="time_required">
-            ■ 移動時間 : googleMapで計算する。
-          </div>
-          <br>
-        <% end %>
-        <div class="spot field">
-          開始時間 : <%= day.start_time %><br>
-          終了時間 : <%= day.start_time %><br>
-          location : <%= spot.location_name %><br>
-          所要時間 : <%= spot.stay_time %><br><br>
-
+      <% spots = day.spots.order(numbering: :asc) %>
+      <% spots.each.with_index do |spot, i| %>
+        <div class="time_required">
+          <% if i != 0 %>
+              ■ 移動時間 : <%= @durations[n][i-1] %> 分
+            <br><br>
+          <% end %>
         </div>
-        <% m += 1 %>
+        <div class="spot field">
+          順番 : <%= spot.numbering %><br>
+          <% if i == 0 %>
+            開始時間 : <%= day.start_time %><br>
+            終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
+          <% else %>
+            開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
+            終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
+          <% end %>
+          location : <%= spot.location_name %><br>
+          所要時間 : <%= spot.stay_time %>分<br>
+        </div>
       <% end %>
-
     </div>
-    <% n += 1 %>
   <% end %>
 
 </div>

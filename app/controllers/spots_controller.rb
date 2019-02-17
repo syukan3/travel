@@ -11,7 +11,7 @@ class SpotsController < ApplicationController
     if @spot.save
       redirect_to(edit_brochure_path(@brochure))
     else
-      format.html { render action: "edit" }
+      format.html { render action: "create" }
       format.json { render json: edit_brochure_path(@brochure).errors, status: :unprocessable_entity }
     end
   end
