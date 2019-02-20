@@ -23,6 +23,14 @@
     <%= form.date_field :start_date %>
   </div>
 
+  <div class="checkbox">
+    <% if @brochure.public_flag.nil? %>
+      <%= form.check_box 'public_flag', {:checked => false, :width	=> 40}, true, false %> Public
+    <% else %>
+      <%= form.check_box 'public_flag', {:checked => true, :width	=> 40}, true, false %> Public
+    <% end %>
+  </div>
+
   <br>
 
   <div class="actions">

@@ -48,7 +48,7 @@ class BrochuresController < ApplicationController
     @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
     @durations = Array.new(@days.length)
 
-    def min_changer(input)
+    def minutes_changer(input)
       if input.length == 2 then
         result = input[0].to_i
         return result
@@ -71,7 +71,7 @@ class BrochuresController < ApplicationController
           base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + last_spot.lat.to_s + "," + last_spot.lng.to_s + "&destination=" + spot.lat.to_s + "," + spot.lng.to_s + "&mode=driving&key=" + Rails.application.credentials.google_map_key
           client = HTTPClient.new()
           response = client.get(base_url)
-          @durations[n][num-1] = min_changer(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split)
+          @durations[n][num-1] = minutes_changer(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split)
           last_spot = Spot.find_by(id: spot.id)
         else
           last_spot = Spot.find_by(id: spot.id)
@@ -120,6 +120,9 @@ class BrochuresController < ApplicationController
       end
 
       if @brochure.update(brochure_params)
+        if brochure_params[:public_flag].nil?
+          @brochure.update(public_flag: nil)
+        end
         @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
         n = 0
         @days.each do |day|
@@ -155,6 +158,6 @@ class BrochuresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def brochure_params
-      params.require(:brochure).permit(:title, :departure, :arrival, :start_date, :duration)
+      params.require(:brochure).permit(:title, :start_date, :duration, :public_flag)
     end
 end
