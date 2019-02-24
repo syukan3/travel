@@ -10,7 +10,12 @@ class MembersController < ApplicationController
   end
 
   def create
-
+    @brochure = Brochure.find_by(id: params[:brochure_id])
+    ActiveRecord::Base.transaction do
+      @brochure.members.destroy_all
+      @brochure.members.create(params[:user_ids].map{|user_id| {user_id: user_id}})
+    end
+    redirect_to edit_brochure_path(@brochure)
   end
 
 

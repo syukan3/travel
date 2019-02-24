@@ -46,8 +46,9 @@ class BrochuresController < ApplicationController
 
   # GET /brochures/1/edit
   def edit
-    @brochure = Brochure.find(params[:id])
-    @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
+
+    @brochure = Brochure.includes(:members).where(members: {user: current_user}).find(params[:id])
+    @days = Day.where(brochure_id: @brochure.id).order(position: :asc)
     @durations = Array.new(@days.length)
     @members = Member.where(brochure_id: params[:id])
 
@@ -98,8 +99,8 @@ class BrochuresController < ApplicationController
         @member.save
         # times.each使って、招待者数繰り返す（member.user_id / @member.brochure_id）.
 
-        brochure_params[:duration].to_i.times.each do |n|
-          @day = Day.create(brochure_id: @brochure.id, start_time: @brochure.start_date + 60*60*10 + 60*60*24*n)
+        brochure_params[:duration].to_i.times.each.with_index(1) do |n, index|
+          @day = Day.create(brochure_id: @brochure.id, start_time: @brochure.start_date + 60*60*10 + 60*60*24*n, position: index)
         end
 
         format.html { redirect_to edit_brochure_path(@brochure), notice: 'Brochure was successfully created.' }

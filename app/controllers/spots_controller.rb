@@ -51,18 +51,20 @@ class SpotsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
-  def spot_higher
-    @day = Day.find_by(id: params[:day_id])
-    @brochure = Brochure.find_by(id: @day.brochure_id)
-    Spot.find(params[:id]).move_higher
+
+  def higher
+    @spot = Spot.find_by(id: params[:spot_id])
+    @day = @spot.day
+    @brochure = @day.brochure
+    @spot.move_higher
     redirect_to edit_brochure_path(@brochure)
   end
 
-  def spot_lower
-    @day = Day.find_by(id: params[:day_id])
-    @brochure = Brochure.find_by(id: @day.brochure_id)
-    Spot.find(params[:id]).move_lower
+  def lower
+    @spot = Spot.find_by(id: params[:spot_id])
+    @day = @spot.day
+    @brochure = @day.brochure
+    @spot.move_lower
     redirect_to edit_brochure_path(@brochure)
   end
 

@@ -1,6 +1,6 @@
 <h1>メンバー追加</h1>
 
-<%= form_with(model: @member, scope: :post, url: brochure_members_path(@brochure)) do |form| %>
+<%= form_with(url: brochure_members_path(@brochure)) do |form| %>
   <% if @member.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@member.errors.count, "error") %> prohibited this member from being saved:</h2>
@@ -14,11 +14,7 @@
 
   <% @users.each.with_index(1) do |user, n| %>
     <div class="checkbox" style="display: inline-block; display: inline;">
-      <% if @members.find_by(user_id: user.id).nil? %>
-        <%= form.check_box 'user_id', {:checked => false, :width	=> 40}, user.id, nil %>
-      <% else %>
-        <%= form.check_box 'user_id', {:checked => true, :width	=> 40}, user.id, nil %>
-      <% end %>
+      <%= form.check_box 'user_ids[]', {:checked => @members.find_by(user_id: user.id).present?, :width	=> 40}, user.id, nil %>
     </div>
     <%= user.email %><br>
   <% end %>

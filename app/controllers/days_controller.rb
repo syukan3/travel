@@ -75,6 +75,20 @@ class DaysController < ApplicationController
     end
   end
 
+  def higher
+    @day = Day.find_by(id: params[:day_id])
+    @brochure = @day.brochure
+    @day.move_higher
+    redirect_to edit_brochure_path(@brochure)
+  end
+
+  def lower
+    @day = Day.find_by(id: params[:day_id])
+    @brochure = @day.brochure
+    @day.move_lower
+    redirect_to edit_brochure_path(@brochure)
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_day
