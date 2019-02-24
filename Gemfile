@@ -66,3 +66,5 @@ gem 'devise'
 gem "jquery-rails"
 
 gem 'httpclient'
+
+gem 'acts_as_list'

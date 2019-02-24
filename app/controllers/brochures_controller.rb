@@ -14,9 +14,11 @@ class BrochuresController < ApplicationController
     @brochure = Brochure.find(params[:id])
     @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
     @durations = Array.new(@days.length)
+    @members = Member.where(brochure_id: params[:id])
+
 
     @days.each.with_index do |day, n|
-      spots = Spot.where(day_id: day.id).order(numbering: :asc)
+      spots = Spot.where(day_id: day.id).order(position: :asc)
       last_spot = nil
 
       if spots.length-1 > 0
@@ -47,6 +49,7 @@ class BrochuresController < ApplicationController
     @brochure = Brochure.find(params[:id])
     @days = Day.where(brochure_id: @brochure.id).order(start_time: :asc)
     @durations = Array.new(@days.length)
+    @members = Member.where(brochure_id: params[:id])
 
     def minutes_changer(input)
       if input.length == 2 then
@@ -59,7 +62,7 @@ class BrochuresController < ApplicationController
     end
 
     @days.each.with_index do |day, n|
-      spots = Spot.where(day_id: day.id).order(numbering: :asc)
+      spots = Spot.where(day_id: day.id).order(position: :asc)
       last_spot = nil
 
       if spots.length-1 > 0
@@ -79,6 +82,8 @@ class BrochuresController < ApplicationController
       end
     end
   end
+
+
 
   # POST /brochures
   # POST /brochures.json

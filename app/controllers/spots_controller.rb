@@ -7,7 +7,7 @@ class SpotsController < ApplicationController
     spots = Spot.where(day_id: @day.id)
 
     # ↓ AutoComplete から location_name/time_required/lat/lng を params で受け取る。
-    @spot = Spot.new(day_id: @day.id, location_name: params[:spot], stay_time: 60, numbering: spots.count+1, lat: params[:lat], lng: params[:lng])
+    @spot = Spot.new(day_id: @day.id, location_name: params[:spot], stay_time: 60, position: spots.count+1, lat: params[:lat], lng: params[:lng])
     if @spot.save
       redirect_to(edit_brochure_path(@brochure))
     else
@@ -41,15 +41,29 @@ class SpotsController < ApplicationController
     @day = Day.find_by(id: params[:day_id])
     @brochure = Brochure.find_by(id: @day.brochure_id)
     @spot.destroy
-    spots = Spot.where(day_id: @day.id).order(numbering: :asc)
+    spots = Spot.where(day_id: @day.id).order(position: :asc)
     spots.each.with_index do |spot, num|
-      spot.numbering = num + 1
+      spot.position = num + 1
       spot.save
     end
     respond_to do |format|
       format.html { redirect_to edit_brochure_path(@brochure), notice: 'Spot was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+  
+  def spot_higher
+    @day = Day.find_by(id: params[:day_id])
+    @brochure = Brochure.find_by(id: @day.brochure_id)
+    Spot.find(params[:id]).move_higher
+    redirect_to edit_brochure_path(@brochure)
+  end
+
+  def spot_lower
+    @day = Day.find_by(id: params[:day_id])
+    @brochure = Brochure.find_by(id: @day.brochure_id)
+    Spot.find(params[:id]).move_lower
+    redirect_to edit_brochure_path(@brochure)
   end
 
   private
@@ -60,7 +74,7 @@ class SpotsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def spot_params
-      params.require(:spot).permit(:location_name, :numbering, :lat, :lng, :stay_time)
+      params.require(:spot).permit(:location_name, :position, :lat, :lng, :stay_time)
     end
 
 end
