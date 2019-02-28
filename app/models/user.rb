@@ -7,4 +7,7 @@ class User < ApplicationRecord
 
   has_many :members
   has_many :brochures, through: :members
+
+  has_one_attached :avatar
+
 end

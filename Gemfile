@@ -68,3 +68,5 @@ gem "jquery-rails"
 gem 'httpclient'
 
 gem 'acts_as_list'
+
+gem 'bootstrap', '~> 4.1.1'
