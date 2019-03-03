@@ -149,7 +149,10 @@ class BrochuresController < ApplicationController
   # DELETE /brochures/1
   # DELETE /brochures/1.json
   def destroy
-    @brochure.destroy
+    ActiveRecord::Base.transaction do
+      @brochure.members.destroy_all
+      @brochure.destroy
+    end
     respond_to do |format|
       format.html { redirect_to user_path(current_user), notice: 'Brochure was successfully destroyed.' }
       format.json { head :no_content }

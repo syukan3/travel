@@ -1,40 +1,40 @@
-<h1>Home#top</h1>
-<p>Find me in app/views/home/top.html.erb</p>
+<section class="jumbotron text-center">
+  <div class="container">
+    <h1 class="jumbotron-heading">Album example</h1>
+    <p id="sub-explain" class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
+    <p>
+      <%= link_to 'New Travel', new_brochure_path, :class=>"btn btn-primary my-2" %>
+      <!-- <%= link_to 'New Travel', new_brochure_path, :class=>"btn btn-primary my-2" %> -->
+    </p>
+  </div>
+</section>
 
-<% if user_signed_in? %>
-  <table>
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Number of days</th>
-        <th>Public</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
-
-    <tbody>
+<div class="album py-5 bg-light">
+  <div class="container">
+    <h2>Time Line</h2>
+    <div class="row">
       <% @brochures.each do |brochure| %>
-        <tr>
-          <td><%= brochure.title %></td>
-          <td><%= brochure.start_date.to_date %></td>
-          <td><%= (brochure.start_date + 60*60*24*(brochure.duration-1)).to_date %></td>
-          <td><%= brochure.duration %></td>
-          <td><%= brochure.public_flag %></td>
-          <td><%= link_to 'Show', brochure %></td>
-          <td>
-            <% if @members.find_by(brochure_id: brochure.id) %>
-              <%= link_to 'Edit', edit_brochure_path(brochure) %>
-            <% end %>
-          </td>
-          <td>
-            <% if @members.find_by(brochure_id: brochure.id) %>
-              <%= link_to 'Destroy', brochure, method: :delete, data: { confirm: 'Are you sure?' } %>
-            <% end %>
-          </td>
-        </tr>
+        <div class="col-md-4">
+          <div class="card mb-4 shadow-sm">
+            <div width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail"></div>
+            {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %}
+            <div class="card-body">
+              <h3 class="card-text"><span style="font-size: 50%; font-weight: 400; color: #6c757d;">Title: </span><%= brochure.title %></h3>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <% if user_signed_in? %>
+                    <%= link_to 'Show', brochure, :class=>"btn btn-sm btn-outline-secondary" %>
+                    <% if @members.find_by(brochure_id: brochure.id) %>
+                      <%= link_to 'Edit', edit_brochure_path(brochure), :class=>"btn btn-sm btn-outline-secondary" %>
+                    <% end %>
+                  <% end %>
+                </div>
+                <small class="text-muted"><%= brochure.start_date.to_date %> 〜 <%= (brochure.start_date + 60*60*24*(brochure.duration-1)).to_date %> <br>(<%= brochure.duration %> days)</small>
+              </div>
+            </div>
+          </div>
+        </div>
       <% end %>
-    </tbody>
-  </table>
-<% end %>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,11 @@
-<h1>Editing Brochure</h1>
+<% @brochure.days.each.with_index do |day, num| %>
+  <% spots_data = Spot.where(day_id: day.id) %>
+  <%= tag("div", data: { spots: spots_data.to_json}, id: "spotsData") %>
+<% end %>
 
+<h1>Editing Brochure</h1>
 <%= form_with(model: @brochure, local: true) do |form| %>
+  <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' } %>
   <% if @brochure.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>

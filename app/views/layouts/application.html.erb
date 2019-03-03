@@ -10,21 +10,40 @@
   </head>
 
   <body>
-    <% if user_signed_in? %>
-      <br>
-      <%= link_to "トップ", "/" %> |
-      <%= link_to "マイページ", user_path(current_user.id) %> |
-      <%= link_to "プロフィール変更", edit_user_registration_path %> |
-      <%= link_to "ログアウト", destroy_user_session_path	, method: :DELETE %>
-      <div id="login">Logged in as : <strong><%= current_user.email %></strong>.</div>
+    <header>
+      <!-- Fixed navbar -->
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <strong>TravelMaker</strong>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
 
-    <% else %>
-      <br>
-      <%= link_to "ユーザー登録", new_user_registration_path %> |
-      <%= link_to "ログイン", new_user_session_path %>
-      &ensp;&ensp;
-    <% end %>
-    
+          <form class="form-inline navbar-nav mr-auto">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+          <% if user_signed_in? %>
+            <%= link_to "マイページ", user_path(current_user.id) %>
+            <%= link_to "プロフィール変更", edit_user_registration_path %>
+            <div id="login" style="display: inline-block; display: inline;">Logged in as : <strong><%= current_user.email %></strong>.</div>
+            <%= link_to "ログアウト", destroy_user_session_path	, method: :DELETE %>
+          <% else %>
+            <%= link_to "ユーザー登録", new_user_registration_path %> |
+            <%= link_to "ログイン", new_user_session_path %>
+            &ensp;&ensp;
+          <% end %>
+        </div>
+      </nav>
+    </header>
+    <br><br>
+
     <%= yield %>
+
+    <br><br>
+
   </body>
 </html>

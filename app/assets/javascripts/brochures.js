@@ -4,6 +4,26 @@ function setDeparture(lat, lng) {
   console.log(lng);
 }
 
+var ready = function(map) {
+  var markDays = document.querySelectorAll('[id^=day_id]');
+  markDays.forEach(function(markDay, index) {
+    var markSpots = JSON.parse(document.getElementById("spots_data_"+markDays[index].dataset.dayId).dataset.spots);
+    console.log(markSpots);
+
+    markSpots.forEach(function(markSpot, index) {
+      console.log(markSpot);
+      var marker = new google.maps.Marker({
+        position: {
+          lat: Number(markSpot.lat),
+          lng: Number(markSpot.lng)
+        },
+        map: map,
+        animation: google.maps.Animation.DROP
+      });
+    });
+  });
+}
+
 
 var markers = [];
 function initMap() {
@@ -13,6 +33,7 @@ function initMap() {
   }
 
   // current location
+
   navigator.geolocation.getCurrentPosition(function(position) {
     var map = new google.maps.Map(document.getElementById('map'), {
       center: {
@@ -21,6 +42,7 @@ function initMap() {
       },
       zoom: 15
     });
+    ready(map);
 
     // Auto complete
     var spots = document.querySelectorAll('[id^=spot_day_]')
