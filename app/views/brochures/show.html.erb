@@ -3,85 +3,87 @@
   <%= tag("div", data: { 'day-id'=>day.id }, id: "day_id_#{day.id}") %>
   <%= tag("div", data: { 'spots'=>spots_data.to_json }, id: "spots_data_#{day.id}") %>
 <% end %>
+<div class="wrapper">
+  <div class="brochure-left">
+    <h1>しおり</h1>
+    <p id="notice"><%= notice %></p>
 
-<h1>しおり</h1>
+    <p>
+      <strong>Title:</strong>
+      <%= @brochure.title %>
+    </p>
 
-<p id="notice"><%= notice %></p>
+    <p>
+      <strong>Start date:</strong>
+      <%= @brochure.start_date.to_date %> 〜 <%= (@brochure.start_date + 60*60*24*(@brochure.duration-1)).to_date %>
+    </p>
 
-<p>
-  <strong>Title:</strong>
-  <%= @brochure.title %>
-</p>
+    <p>
+      <strong>Number of days:</strong>
+      <%= @brochure.duration %>
+    </p>
 
-<p>
-  <strong>Start date:</strong>
-  <%= @brochure.start_date.to_date %> 〜 <%= (@brochure.start_date + 60*60*24*(@brochure.duration-1)).to_date %>
-</p>
-
-<p>
-  <strong>Number of days:</strong>
-  <%= @brochure.duration %>
-</p>
-
-<p>
-  <strong>Public:</strong>
-  <%= @brochure.public_flag %>
-</p>
-<br>
+    <p>
+      <strong>Public:</strong>
+      <%= @brochure.public_flag %>
+    </p>
+    <br>
 
 
-<h1>メンバー</h1>
-<div class="members">
-  <% @members.each.with_index(1) do |member, n| %>
-    <%= n %> :
-    <%= member.user.email %><br>
-  <% end %>
-</div>
-<br><br>
+    <h1>メンバー</h1>
+    <div class="members">
+      <% @members.each.with_index(1) do |member, n| %>
+      <%= n %> :
+      <%= member.user.email %><br>
+      <% end %>
+    </div>
+    <br><br>
 
-<h1>スケジュール</h1>
+    <h1 id="btn_all_days">スケジュール</h1>
 
-<div class="days">
-  <% next_time = [] %>
-  <% @days.each.with_index do |day, n| %>
-    <div class="day">
-      <%= content_tag :h3, "#{n+1} 日目", id:"day_#{day.id}", style:"display:inline;" %>
-      <!-- <h3 id="day_#{day.id}"> style="display:inline;"><%= n+1 %> 日目 </h3> -->
-      <p>開始時間 : <%= day.start_time %></p>
-      <% spots = day.spots.order(position: :asc) %>
-      <% spots.each.with_index do |spot, i| %>
+    <div class="days">
+      <% next_time = [] %>
+      <% @days.each.with_index do |day, n| %>
+      <div class="day">
+        <!-- <%= content_tag :h3, "#{n+1} 日目", id:"btn_days", data: {'day-id'=>day.id}, style:"display:inline;" %> -->
+        <%= content_tag :h3, "#{n+1} 日目", id:"btn_days_#{day.id}", data: {'day-id'=>day.id}, style:"display:inline;" %>
+        <!-- <h3 id="day_#{day.id}"> style="display:inline;"><%= n+1 %> 日目 </h3> -->
+        <p>開始時間 : <%= day.start_time %></p>
+        <% spots = day.spots.order(position: :asc) %>
+        <% spots.each.with_index do |spot, i| %>
         <div class="time_required">
           <% if i != 0 %>
-              ■ 移動時間 : <%= @durations[n][i-1] %> 分
-            <br><br>
+          ■ 移動時間 : <%= @durations[n][i-1] %> 分
+          <br><br>
           <% end %>
         </div>
         <div class="spot field">
           順番 : <%= spot.position %><br>
           <% if i == 0 %>
-            開始時間 : <%= day.start_time %><br>
-            終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
+          開始時間 : <%= day.start_time %><br>
+          終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
           <% else %>
-            開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
-            終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
+          開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
+          終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
           <% end %>
           location : <%= spot.location_name %><br>
           所要時間 : <%= spot.stay_time %>分<br>
         </div>
+        <% end %>
+      </div>
       <% end %>
     </div>
-  <% end %>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
+      async defer></script>
+
+      <br>
+
+      <% if @members.find_by(user_id: current_user.id) %>
+      <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' } %> |
+      <%= link_to 'Edit', edit_brochure_path(@brochure) %> |
+      <% end %>
+      <%= link_to 'Back', user_path(current_user) %>
+  </div>
+  <div id="map" class="brochure-right"></div>
 </div>
-
-<div id="map"></div>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
-    async defer></script>
-
-<br>
-
-<% if @members.find_by(user_id: current_user.id) %>
-  <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' } %> |
-  <%= link_to 'Edit', edit_brochure_path(@brochure) %> |
-<% end %>
-<%= link_to 'Back', user_path(current_user) %>

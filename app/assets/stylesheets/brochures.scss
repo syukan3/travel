@@ -3,9 +3,27 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 #map {
-    width: 700px;
-    height: 400px;
+  width: 700px;
+  height: 610px;
 }
+
+.wrapper {
+  overflow: hidden;
+}
+
+.brochure-left {
+  float: left;
+  width: 100%;
+  margin-right: -700px;
+  padding-right: 700px;
+  box-sizing: border-box;
+}
+
+.brochure-right {
+  float: right;
+  width: 700px;
+}
+
 
 #checkbox {
   width: 20px;

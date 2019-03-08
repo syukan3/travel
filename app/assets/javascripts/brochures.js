@@ -4,14 +4,16 @@ function setDeparture(lat, lng) {
   console.log(lng);
 }
 
-var ready = function(map) {
-  var markDays = document.querySelectorAll('[id^=day_id]');
-  markDays.forEach(function(markDay, index) {
-    var markSpots = JSON.parse(document.getElementById("spots_data_"+markDays[index].dataset.dayId).dataset.spots);
-    console.log(markSpots);
+var dataSpots = new Array;
 
-    markSpots.forEach(function(markSpot, index) {
-      console.log(markSpot);
+// var ready = function(map) {
+function setMarkerAllDays(map) {
+  var markDays = document.querySelectorAll('[id^=day_id]');
+  markDays.forEach(function(markDay, numDay) {
+    dataSpots[numDay] = new Array();
+    var markSpots = JSON.parse(document.getElementById("spots_data_"+markDay.dataset.dayId).dataset.spots);
+    markSpots.forEach(function(markSpot, numSpot) {
+      dataSpots[numDay][numSpot] = markSpot;
       var marker = new google.maps.Marker({
         position: {
           lat: Number(markSpot.lat),
@@ -22,8 +24,31 @@ var ready = function(map) {
       });
     });
   });
+  console.log(dataSpots);
 }
 
+function setMarkerDays(map, numBtnDay) {
+  marker.setMap(null);
+  var markDays = document.querySelectorAll('[id^=day_id]');
+  markDays.forEach(function(markDay, numDay) {
+    dataSpots[numDay] = new Array();
+    var markSpots = JSON.parse(document.getElementById("spots_data_"+markDay.dataset.dayId).dataset.spots);
+    markSpots.forEach(function(markSpot, numSpot) {
+      dataSpots[numDay][numSpot] = markSpot;
+    });
+  });
+
+  [...dataSpots[numBtnDay]].map((_, i) => {
+    var marker = new google.maps.Marker({
+      position: {
+        lat: Number(dataSpots[numBtnDay][i].lat),
+        lng: Number(dataSpots[numBtnDay][i].lng)
+      },
+      map: map,
+      animation: google.maps.Animation.DROP
+    });
+  });
+}
 
 var markers = [];
 function initMap() {
@@ -33,7 +58,6 @@ function initMap() {
   }
 
   // current location
-
   navigator.geolocation.getCurrentPosition(function(position) {
     var map = new google.maps.Map(document.getElementById('map'), {
       center: {
@@ -42,10 +66,21 @@ function initMap() {
       },
       zoom: 15
     });
-    ready(map);
+
+    var btnAllDays = document.getElementById("btn_all_days");
+    btnAllDays.addEventListener('click', function() {
+      setMarkerAllDays(map);
+    });
+
+    var btnDays = document.querySelectorAll('[id^=btn_days_]');
+    btnDays.forEach(function(btnDay, numBtnDay) {
+      btnDay.addEventListener('click', function() {
+        setMarkerDays(map, numBtnDay);
+      });
+    });
 
     // Auto complete
-    var spots = document.querySelectorAll('[id^=spot_day_]')
+    var spots = document.querySelectorAll('[id^=spot_day_]');
     spots.forEach(function(spot) {
       var autocompleteSpot = new google.maps.places.Autocomplete(spot);
       autocompleteSpot.bindTo('bounds', map);
