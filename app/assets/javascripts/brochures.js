@@ -4,31 +4,46 @@ function setDeparture(lat, lng) {
   console.log(lng);
 }
 
+// var marker;
+var markers = [];
 var dataSpots = new Array;
+
+function setMapOnAll(map) {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+function clearMarkers() {
+  setMapOnAll(null);
+}
+function deleteMarkers() {
+  clearMarkers();
+  markers = [];
+}
 
 // var ready = function(map) {
 function setMarkerAllDays(map) {
+  deleteMarkers();
   var markDays = document.querySelectorAll('[id^=day_id]');
   markDays.forEach(function(markDay, numDay) {
     dataSpots[numDay] = new Array();
     var markSpots = JSON.parse(document.getElementById("spots_data_"+markDay.dataset.dayId).dataset.spots);
     markSpots.forEach(function(markSpot, numSpot) {
       dataSpots[numDay][numSpot] = markSpot;
-      var marker = new google.maps.Marker({
+      markers.push(new google.maps.Marker({
         position: {
           lat: Number(markSpot.lat),
           lng: Number(markSpot.lng)
         },
         map: map,
         animation: google.maps.Animation.DROP
-      });
+      }));
     });
   });
-  console.log(dataSpots);
 }
 
 function setMarkerDays(map, numBtnDay) {
-  marker.setMap(null);
+  deleteMarkers();
   var markDays = document.querySelectorAll('[id^=day_id]');
   markDays.forEach(function(markDay, numDay) {
     dataSpots[numDay] = new Array();
@@ -39,18 +54,18 @@ function setMarkerDays(map, numBtnDay) {
   });
 
   [...dataSpots[numBtnDay]].map((_, i) => {
-    var marker = new google.maps.Marker({
+    markers.push(new google.maps.Marker({
       position: {
         lat: Number(dataSpots[numBtnDay][i].lat),
         lng: Number(dataSpots[numBtnDay][i].lng)
       },
       map: map,
       animation: google.maps.Animation.DROP
-    });
+    }));
   });
 }
 
-var markers = [];
+// var markers = [];
 function initMap() {
   if (!navigator.geolocation) {
     alert('Geolocation not supported');
@@ -95,11 +110,11 @@ function initMap() {
           window.alert("No details available for input: '" + place.name + "'");
           return;
         }
-        var marker = new google.maps.Marker({
+        markers.push(new google.maps.Marker({
           position: place.geometry.location,
           map: map,
           animation: google.maps.Animation.DROP
-        });
+        }));
         if (place.geometry.viewport) {
           map.fitBounds(place.geometry.viewport);
         } else {
@@ -111,11 +126,11 @@ function initMap() {
 
     // Set markers when user touches maps
     map.addListener('click', function(e) {
-      var marker = new google.maps.Marker({
+      markers.push(new google.maps.Marker({
         position: e.latLng,
         map: map,
         animation: google.maps.Animation.DROP
-      });
+      }));
       var infoWindow = new google.maps.InfoWindow({
         // content: e.latLng.toString() + "<ul><li onclick='setDeparture(place)'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
         content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>いきたい場所</li><li>マーカーを外す</li></ul>"
@@ -123,8 +138,8 @@ function initMap() {
       // var infowindow = new google.maps.InfoWindow();
       // var infowindowContent = document.getElementById('infowindow-content');
       // infowindow.setContent(infowindowContent);
-      marker.addListener('click', function() {
-        infoWindow.open(map, marker);
+      markers.addListener('click', function() {
+        infoWindow.open(map, markers);
       });
     });
   });
