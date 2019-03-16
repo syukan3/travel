@@ -1,7 +1,18 @@
 
-function setDeparture(lat, lng) {
-  console.log(lat);
-  console.log(lng);
+function setDeparture(lat, lng, dayId) {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState === 4) {
+      if (xhr.status === 200) {
+          console.log(xhr.response);
+      } else {
+          console.log("status = " + xhr.status);
+      }
+    }
+  };
+  xhr.open("GET", "http://localhost:3000/api/set_spot?day_id=" + dayId + "&lat=" + lat + "&lng=" + lng);
+  xhr.responseType = "json";
+  xhr.send();
 }
 
 // var marker;
@@ -36,7 +47,8 @@ function setMarkerAllDays(map) {
           lng: Number(markSpot.lng)
         },
         map: map,
-        animation: google.maps.Animation.DROP
+        animation: google.maps.Animation.DROP,
+        label: (numDay+1).toString()
       }));
     });
   });
@@ -53,6 +65,9 @@ function setMarkerDays(map, numBtnDay) {
     });
   });
 
+  var pinColor = 'ffffff'; // マーカーの色を指定
+  var pinImage = new google.maps.MarkerImage('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|' + pinColor);
+
   [...dataSpots[numBtnDay]].map((_, i) => {
     markers.push(new google.maps.Marker({
       position: {
@@ -60,7 +75,9 @@ function setMarkerDays(map, numBtnDay) {
         lng: Number(dataSpots[numBtnDay][i].lng)
       },
       map: map,
-      animation: google.maps.Animation.DROP
+      animation: google.maps.Animation.DROP,
+      // icon: pinImage,
+      label: (numBtnDay+1).toString()
     }));
   });
 }
@@ -125,21 +142,30 @@ function initMap() {
     });
 
     // Set markers when user touches maps
+    var marker;
+
     map.addListener('click', function(e) {
-      markers.push(new google.maps.Marker({
+      marker = new google.maps.Marker({
         position: e.latLng,
         map: map,
         animation: google.maps.Animation.DROP
-      }));
-      var infoWindow = new google.maps.InfoWindow({
-        // content: e.latLng.toString() + "<ul><li onclick='setDeparture(place)'>出発地</li><li>いきたい場所</li><li>解散場所</li><li>マーカーを外す</li></ul>"
-        content: e.latLng.toString() + "<ul><li onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>いきたい場所</li><li>マーカーを外す</li></ul>"
       });
-      // var infowindow = new google.maps.InfoWindow();
-      // var infowindowContent = document.getElementById('infowindow-content');
-      // infowindow.setContent(infowindowContent);
-      markers.addListener('click', function() {
-        infoWindow.open(map, markers);
+
+
+      var wantDay = [];
+      btnDays.forEach(function(btnDay, numBtnDay) {
+        var dayId = btnDays[numBtnDay].dataset.dayId;
+        var day = numBtnDay + 1;
+        wantDay[numBtnDay] = "<ol onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ', ' + dayId + ")'>"+ day +"日目</ol>";
+      });
+      var olWantDay = wantDay.join('');
+
+      var infoWindow = new google.maps.InfoWindow({
+        // content: e.latLng.toString() + "<ul><li>いきたい場所<ol onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>1日目</ol></li><li>マーカーを外す</li></ul>"
+        content: e.latLng.toString() + "<ul><li>いきたい場所" + olWantDay + "</li><li>マーカーを外す</li></ul>"
+      });
+      marker.addListener('click', function() {
+        infoWindow.open(map, marker);
       });
     });
   });

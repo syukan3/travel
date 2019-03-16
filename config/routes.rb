@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'api/set_spot'
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get '/' => 'home#top'
@@ -15,6 +16,7 @@ Rails.application.routes.draw do
       end
     end
   end
-  # resources :members, only: %i(create destroy)
+
+  resources :api
 
 end
