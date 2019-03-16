@@ -17,6 +17,8 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :api
+  namespace :api do
+    resources :spots, only: %i(create)
+  end
 
 end

@@ -1,18 +1,22 @@
 
-function setDeparture(lat, lng, dayId) {
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-          console.log(xhr.response);
-      } else {
-          console.log("status = " + xhr.status);
-      }
-    }
-  };
-  xhr.open("GET", "http://localhost:3000/api/set_spot?day_id=" + dayId + "&lat=" + lat + "&lng=" + lng);
-  xhr.responseType = "json";
-  xhr.send();
+function doPost(data) {
+   var url = '/api/spots';
+   console.log(url);
+   var xhr = new XMLHttpRequest();
+   xhr.open("POST", url);
+   xhr.setRequestHeader("Content-Type", "application/json");
+   xhr.onload = () => {
+     console.log(xhr.status);
+     console.log("success!");
+     location.reload();
+   };
+   xhr.onerror = () => {
+     console.log(xhr.status);
+     console.log("error!");
+   };
+   var csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
+   xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+   xhr.send(JSON.stringify(data));
 }
 
 // var marker;
@@ -156,7 +160,12 @@ function initMap() {
       btnDays.forEach(function(btnDay, numBtnDay) {
         var dayId = btnDays[numBtnDay].dataset.dayId;
         var day = numBtnDay + 1;
-        wantDay[numBtnDay] = "<ol onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ', ' + dayId + ")'>"+ day +"日目</ol>";
+        var params = {
+          lat: e.latLng.lat(),
+          lng: e.latLng.lng(),
+          day_id: dayId
+        }
+        wantDay[numBtnDay] = "<ol onclick='doPost(" + JSON.stringify(params) + ")'>"+ day +"日目</ol>";
       });
       var olWantDay = wantDay.join('');
 
