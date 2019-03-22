@@ -8,6 +8,7 @@ class User < ApplicationRecord
   has_many :members
   has_many :brochures, through: :members
 
-  has_one_attached :avatar
+  # has_one_attached :avatar
+  mount_uploader :avatar, AvatarUploader
 
 end

@@ -70,3 +70,8 @@ gem 'httpclient'
 gem 'acts_as_list'
 
 gem 'bootstrap', '~> 4.1.1'
+
+gem 'carrierwave'
+# gem 'rmagick'
+
+gem 'mini_magick'

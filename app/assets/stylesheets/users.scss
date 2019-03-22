@@ -46,3 +46,30 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.mypage-background {
+  background-image: image-url("image3.jpg");
+  width: 100%;
+  height: 200px;
+  box-shadow: 0 2px 6px #c1ced7;
+  margin: 0 0 10px;
+  object-fit: cover;
+  // background-size:100% 100%;
+}
+
+.mypage_brochure_no_image {
+  width: 200px;
+  height: 250px;
+  background-color: gray;
+  box-shadow: 0 2px 6px #c1ced7;
+  margin: 0;
+  object-fit: cover;
+}
+
+.mypage_brochure_image {
+  width: 200px;
+  height: 250px;
+  box-shadow: 0 2px 6px #c1ced7;
+  margin: 0;
+  object-fit: cover;
+}

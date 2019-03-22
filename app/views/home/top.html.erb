@@ -1,10 +1,9 @@
-<section class="jumbotron text-center">
-  <div class="container">
-    <h1 class="jumbotron-heading">Album example</h1>
+<section class="jumbotron text-center top-background">
+  <div class="container top-text">
+    <h1 class="jumbotron-heading">TravelMaker</h1>
     <p id="sub-explain" class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
     <p>
       <%= link_to 'New Travel', new_brochure_path, :class=>"btn btn-primary my-2" %>
-      <!-- <%= link_to 'New Travel', new_brochure_path, :class=>"btn btn-primary my-2" %> -->
     </p>
   </div>
 </section>
@@ -16,8 +15,13 @@
       <% @brochures.each do |brochure| %>
         <div class="col-md-4">
           <div class="card mb-4 shadow-sm">
-            <div width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail"></div>
-            {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %}
+            <div width="100%" height="300" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail"></div>
+            <% if brochure.avatar.attached? %>
+              <%= image_tag(url_for(brochure.avatar), :class => "top_brochure_image") %>
+            <% else %>
+              <div class="top_brochure_no_image"></div>
+            <% end %>
+            <!-- {% include icons/placeholder.svg width="100%" height="225" background="#55595c" color="#eceeef" class="card-img-top" text="Thumbnail" %} -->
             <div class="card-body">
               <h3 class="card-text"><span style="font-size: 50%; font-weight: 400; color: #6c757d;">Title: </span><%= brochure.title %></h3>
               <div class="d-flex justify-content-between align-items-center">

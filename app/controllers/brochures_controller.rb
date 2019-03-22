@@ -16,7 +16,6 @@ class BrochuresController < ApplicationController
     @durations = Array.new(@days.length)
     @members = Member.where(brochure_id: params[:id])
 
-
     @days.each.with_index do |day, n|
       spots = Spot.where(day_id: day.id).order(position: :asc)
       last_spot = nil
@@ -167,6 +166,6 @@ class BrochuresController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def brochure_params
-      params.require(:brochure).permit(:title, :start_date, :duration, :public_flag)
+      params.require(:brochure).permit(:title, :start_date, :duration, :public_flag, :avatar)
     end
 end

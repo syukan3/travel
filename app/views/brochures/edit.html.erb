@@ -4,128 +4,137 @@
   <%= tag("div", data: { 'spots'=>spots_data.to_json }, id: "spots_data_#{day.id}") %>
 <% end %>
 
-<h1>Editing Brochure</h1>
-<%= form_with(model: @brochure, local: true) do |form| %>
-  <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' } %>
-  <% if @brochure.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
+<div class="wrapper">
+  <div class="brochure-left">
+    <h1>Editing Brochure</h1>
+    <%= form_with(model: @brochure, local: true) do |form| %>
+      <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' } %>
+      <% if @brochure.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
 
-      <ul>
-      <% brochure.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+          <ul>
+          <% brochure.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+          </ul>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </div>
+      <div class="field">
+        <%= form.label :title %>
+        <%= form.text_field :title %>
+      </div>
 
-  <div class="field">
-    <%= form.label :start_date %>
-    <%= form.date_field :start_date %>
-  </div>
+      <div class="field">
+        <%= form.label :start_date %>
+        <%= form.date_field :start_date %>
+      </div>
 
-  <div class="checkbox">
-    <%= form.check_box 'public_flag', {:checked => @brochure.public_flag, :width	=> 40}, true, false %> Public
-  </div>
+      <div class="field">
+        <%= form.label :Image %>
+        <%= form.file_field :avatar, :value => @brochure.avatar %>
+      </div>
 
-  <br>
+      <div class="checkbox">
+        <%= form.check_box 'public_flag', {:checked => @brochure.public_flag, :width	=> 40}, true, false %> Public
+      </div>
 
-  <div class="actions">
-    <%= form.submit %>
-  </div>
+      <br>
 
-<% end %>
-<br>
-<h1>メンバー</h1>
-<div class="members">
-  <%= link_to "メンバー追加", brochure_members_path(@brochure) , method: :get %><br><br>
+      <div class="actions">
+        <%= form.submit %>
+      </div>
 
-  <% @members.each.with_index(1) do |member, n| %>
-    <%= n %> :
-    <%= member.user.email %><br>
-  <% end %>
-</div>
+    <% end %>
+    <br>
+    <h1>メンバー</h1>
+    <div class="members">
+      <%= link_to "メンバー追加", brochure_members_path(@brochure) , method: :get %><br><br>
 
-
-<br><br>
-
-<h1>スケジュール</h1>
-
-<div class="days">
-  <%= link_to "１日追加", brochure_days_path(@brochure) , method: :post %><br><br>
-  <% next_time = [] %>
-  <% @days.each.with_index do |day, n| %>
-    <div class="day">
-      <h3 style="display:inline;"><%= n+1 %> 日目 　　</h3>
-      <%= link_to '↑', brochure_day_higher_path(@brochure, day), method: :put %>
-      <%= link_to '↓', brochure_day_lower_path(@brochure, day), method: :put %>
-      <%= link_to '更新', edit_brochure_day_path(@brochure, day), method: :get %>
-      <%= link_to 'Destroy', brochure_day_path(@brochure, day), method: :delete, data: { confirm: 'Are you sure?' } %>
-      <p>開始時間 : <%= day.start_time %></p>
-
-      <%= form_with(model: @spot, local: true, url: brochure_day_spots_path(@brochure, day)) do |form| %>
-        <% spots = day.spots.order(position: :asc) %>
-        <% spots.each.with_index do |spot, i| %>
-          <div class="time_required">
-            <% if i != 0 %>
-              <% if @durations[n][i-1] >= 60 %>
-                <% duration_hour = @durations[n][i-1].to_i / 60 %>
-                <% duration_min = @durations[n][i-1].to_i - duration_hour * 60 %>
-                <% duration_display = duration_hour.to_s + "時間" + duration_min.to_s + "分" %>
-              <% else %>
-                <% duration_display = @durations[n][i-1].to_s + "分" %>
-              <% end %>
-              ■ 移動時間 : <%= duration_display %>
-              <br><br>
-            <% end %>
-          </div>
-          <div class="spot field">
-            順番 : <%= spot.position %>
-            <%= link_to '↑', brochure_day_spot_higher_path(@brochure, day, spot), method: :put %>
-            <%= link_to '↓', brochure_day_spot_lower_path(@brochure, day, spot), method: :put %>
-            <br>
-            <% if i == 0 %>
-              開始時間 : <%= day.start_time %><br>
-              終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
-            <% else %>
-              開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
-              終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
-            <% end %>
-            location : <%= spot.location_name %><br>
-            所要時間 : <%= spot.stay_time %>分<br>
-            <%= link_to "更新", edit_brochure_day_spot_path(@brochure, day, spot) , method: :get %><br>
-            <%= link_to "行かない", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br>
-          </div>
-        <% end %>
-        <%= form.text_field :spot, id:"spot_day_#{day.id}", data: {'day-id'=>day.id} %>
-        <%= form.hidden_field :lat, id:"spot_lat_#{day.id}" %>
-        <%= form.hidden_field :lng, id:"spot_lng_#{day.id}" %>
-        <div class="actions"><%= form.submit "+ いきたい場所" %></div><br><br><br>
+      <% @members.each.with_index(1) do |member, n| %>
+        <%= n %> :
+        <%= member.user.email %><br>
       <% end %>
     </div>
-  <% end %>
 
+
+    <br><br>
+
+    <h1 id="btn_all_days">スケジュール</h1>
+
+    <div class="days">
+      <%= link_to "１日追加", brochure_days_path(@brochure) , method: :post %><br><br>
+      <% next_time = [] %>
+      <% @days.each.with_index do |day, n| %>
+        <div class="day">
+          <!-- <h3 style="display:inline;"><%= n+1 %> 日目 　　</h3> -->
+          <%= content_tag :h3, "#{n+1} 日目", id:"btn_days_#{day.id}", data: {'day-id'=>day.id}, style:"display:inline;" %>
+          <%= link_to '↑', brochure_day_higher_path(@brochure, day), method: :put %>
+          <%= link_to '↓', brochure_day_lower_path(@brochure, day), method: :put %>
+          <%= link_to '更新', edit_brochure_day_path(@brochure, day), method: :get %>
+          <%= link_to 'Destroy', brochure_day_path(@brochure, day), method: :delete, data: { confirm: 'Are you sure?' } %>
+          <p>開始時間 : <%= day.start_time %></p>
+
+          <%= form_with(model: @spot, local: true, url: brochure_day_spots_path(@brochure, day)) do |form| %>
+            <% spots = day.spots.order(position: :asc) %>
+            <% spots.each.with_index do |spot, i| %>
+              <div class="time_required">
+                <% if i != 0 %>
+                  <% if @durations[n][i-1] >= 60 %>
+                    <% duration_hour = @durations[n][i-1].to_i / 60 %>
+                    <% duration_min = @durations[n][i-1].to_i - duration_hour * 60 %>
+                    <% duration_display = duration_hour.to_s + "時間" + duration_min.to_s + "分" %>
+                  <% else %>
+                    <% duration_display = @durations[n][i-1].to_s + "分" %>
+                  <% end %>
+                  ■ 移動時間 : <%= duration_display %>
+                  <br><br>
+                <% end %>
+              </div>
+              <div class="spot field">
+                順番 : <%= spot.position %>
+                <%= link_to '↑', brochure_day_spot_higher_path(@brochure, day, spot), method: :put %>
+                <%= link_to '↓', brochure_day_spot_lower_path(@brochure, day, spot), method: :put %>
+                <br>
+                <% if i == 0 %>
+                  開始時間 : <%= day.start_time %><br>
+                  終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
+                <% else %>
+                  開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
+                  終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
+                <% end %>
+                location : <%= spot.location_name %><br>
+                所要時間 : <%= spot.stay_time %>分<br>
+                <%= link_to "更新", edit_brochure_day_spot_path(@brochure, day, spot) , method: :get %><br>
+                <%= link_to "行かない", brochure_day_spot_path(@brochure, day, spot) , method: :delete %><br>
+              </div>
+            <% end %>
+            <%= form.text_field :spot, id:"spot_day_#{day.id}", data: {'day-id'=>day.id} %>
+            <%= form.hidden_field :lat, id:"spot_lat_#{day.id}" %>
+            <%= form.hidden_field :lng, id:"spot_lng_#{day.id}" %>
+            <div class="actions"><%= form.submit "+ いきたい場所" %></div><br><br><br>
+          <% end %>
+        </div>
+      <% end %>
+
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
+        async defer></script>
+
+    <div id="infowindow-content">
+      <img src="" width="16" height="16" id="place-icon">
+      <span id="place-name"  class="title"></span><br>
+      <span id="place-address"></span>
+    </div>
+
+
+    <%= link_to 'Show', @brochure %> |
+
+    <br><br>
+
+    <%= link_to 'Back', brochures_path %>
+  </div>
+  <div id="map" class="brochure-right"></div>
 </div>
-
-<div id="map"></div>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
-    async defer></script>
-
-<div id="infowindow-content">
-  <img src="" width="16" height="16" id="place-icon">
-  <span id="place-name"  class="title"></span><br>
-  <span id="place-address"></span>
-</div>
-
-
-<%= link_to 'Show', @brochure %> |
-
-<br><br>
-
-<%= link_to 'Back', brochures_path %>

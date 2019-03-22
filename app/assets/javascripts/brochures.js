@@ -1,7 +1,6 @@
 
 function doPost(data) {
    var url = '/api/spots';
-   console.log(url);
    var xhr = new XMLHttpRequest();
    xhr.open("POST", url);
    xhr.setRequestHeader("Content-Type", "application/json");
@@ -14,6 +13,7 @@ function doPost(data) {
      console.log(xhr.status);
      console.log("error!");
    };
+   // CSRF-Token
    var csrfToken = document.head.querySelector('meta[name="csrf-token"]').content;
    xhr.setRequestHeader('X-CSRF-Token', csrfToken);
    xhr.send(JSON.stringify(data));

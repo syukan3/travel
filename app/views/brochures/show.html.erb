@@ -3,7 +3,7 @@
   <%= tag("div", data: { 'day-id'=>day.id }, id: "day_id_#{day.id}") %>
   <%= tag("div", data: { 'spots'=>spots_data.to_json }, id: "spots_data_#{day.id}") %>
 <% end %>
-<div class="wrapper">
+<div class="wrapper container">
   <div class="brochure-left">
     <h1>しおり</h1>
     <p id="notice"><%= notice %></p>
@@ -29,14 +29,15 @@
     </p>
     <br>
 
-
-    <h1>メンバー</h1>
-    <div class="members">
+    <% if @members.find_by(user_id: current_user.id) %>
+      <h1>メンバー</h1>
       <% @members.each.with_index(1) do |member, n| %>
-      <%= n %> :
-      <%= member.user.email %><br>
+        <div class="members">
+          <%= n %> :
+          <%= member.user.email %><br>
+        </div>
       <% end %>
-    </div>
+    <% end %>
     <br><br>
 
     <h1 id="btn_all_days">スケジュール</h1>
