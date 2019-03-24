@@ -16,6 +16,16 @@ class BrochuresController < ApplicationController
     @durations = Array.new(@days.length)
     @members = Member.where(brochure_id: params[:id])
 
+    def minutes_changer(input)
+      if input.length == 2 then
+        result = input[0].to_i
+        return result
+      elsif input.length == 4
+        result = input[0].to_i * 60 + input[2].to_i
+        return result
+      end
+    end
+
     @days.each.with_index do |day, n|
       spots = Spot.where(day_id: day.id).order(position: :asc)
       last_spot = nil
@@ -29,7 +39,7 @@ class BrochuresController < ApplicationController
           base_url="https://maps.googleapis.com/maps/api/directions/json?origin=" + last_spot.lat.to_s + "," + last_spot.lng.to_s + "&destination=" + spot.lat.to_s + "," + spot.lng.to_s + "&mode=driving&key=" + Rails.application.credentials.google_map_key
           client = HTTPClient.new()
           response = client.get(base_url)
-          @durations[n][num-1] = JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split.first.to_i
+          @durations[n][num-1] = minutes_changer(JSON.parse(response.body)['routes'][0]['legs'][0]['duration']['text'].split)
           last_spot = Spot.find_by(id: spot.id)
         else
           last_spot = Spot.find_by(id: spot.id)
@@ -40,7 +50,9 @@ class BrochuresController < ApplicationController
 
   # GET /brochures/new
   def new
-    @brochure = Brochure.new
+    if user_signed_in?
+      @brochure = Brochure.new
+    end
   end
 
   # GET /brochures/1/edit

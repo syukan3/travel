@@ -1,52 +1,56 @@
-<%= form_with(model: brochure, local: true) do |form| %>
-  <% if brochure.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
+<div class="container row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+  <div class="col p-4 d-flex flex-column position-static">
+    <%= form_with(model: brochure, local: true) do |form| %>
+      <% if brochure.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(brochure.errors.count, "error") %> prohibited this brochure from being saved:</h2>
 
-      <ul>
-      <% brochure.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+          <ul>
+          <% brochure.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+          </ul>
+        </div>
       <% end %>
-      </ul>
-    </div>
-  <% end %>
 
-  <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+      <div class="field">
+        <%= form.label :title %>
+        <%= form.text_field :title %>
+      </div>
+
+      <div class="field">
+        <%= form.label :start_date %>
+        <%= form.date_field :start_date %>
+      </div>
+
+      <div class="field">
+        <%= form.label "Number of days" %>
+        <%= form.number_field :duration %>
+      </div>
+
+      <div class="checkbox">
+        <%= form.check_box 'public_flag', {:checked => true, :width	=> 40}, true, false %> Public
+      </div>
+
+      <br>
+
+      <div class="actions">
+        <%= form.submit %>
+      </div>
+
+
+
+      <!-- <div id="map"></div>
+
+      <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
+          async defer></script>
+
+      <div id="infowindow-content">
+        <img src="" width="16" height="16" id="place-icon">
+        <span id="place-name"  class="title"></span><br>
+        <span id="place-address"></span>
+      </div> -->
+
+    <% end %>
   </div>
-
-  <div class="field">
-    <%= form.label :start_date %>
-    <%= form.date_field :start_date %>
-  </div>
-
-  <div class="field">
-    <%= form.label "Number of days" %>
-    <%= form.number_field :duration %>
-  </div>
-
-  <div class="checkbox">
-    <%= form.check_box 'public_flag', {:checked => true, :width	=> 40}, true, false %> Public
-  </div>
-
-  <br>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-
-
-
-  <!-- <div id="map"></div>
-
-  <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
-      async defer></script>
-
-  <div id="infowindow-content">
-    <img src="" width="16" height="16" id="place-icon">
-    <span id="place-name"  class="title"></span><br>
-    <span id="place-address"></span>
-  </div> -->
-
-<% end %>
+</div>
