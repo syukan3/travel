@@ -1,29 +1,33 @@
-<h1>メンバー追加</h1>
+<div class="container" style="margin-top: 30px;">
+  <h2>メンバー追加</h2>
+  <div class="no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col p-4 d-flex flex-column position-static">
+      <%= form_with(url: brochure_members_path(@brochure)) do |form| %>
+        <% if @member.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@member.errors.count, "error") %> prohibited this member from being saved:</h2>
+            <ul>
+            <% member.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-<%= form_with(url: brochure_members_path(@brochure)) do |form| %>
-  <% if @member.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@member.errors.count, "error") %> prohibited this member from being saved:</h2>
-      <ul>
-      <% member.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+        <% @users.each.with_index(1) do |user, n| %>
+          <div class="checkbox" style="display: inline-block; display: inline;">
+            <%= form.check_box 'user_ids[]', {:checked => @members.find_by(user_id: user.id).present?, :width	=> 40}, user.id, nil %>
+          </div>
+          <%= user.email %><br>
+        <% end %>
+
+        <br>
+
+        <div class="actions">
+          <%= form.submit %>
+        </div>
+
       <% end %>
-      </ul>
     </div>
-  <% end %>
-
-  <% @users.each.with_index(1) do |user, n| %>
-    <div class="checkbox" style="display: inline-block; display: inline;">
-      <%= form.check_box 'user_ids[]', {:checked => @members.find_by(user_id: user.id).present?, :width	=> 40}, user.id, nil %>
-    </div>
-    <%= user.email %><br>
-  <% end %>
-
-  <br>
-
-
-  <div class="actions">
-    <%= form.submit %>
   </div>
-
-<% end %>
+</div>

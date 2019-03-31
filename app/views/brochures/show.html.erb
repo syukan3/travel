@@ -5,97 +5,103 @@
 <% end %>
 
 <div class="wrapper container">
-  <div class="brochure-left">
-    <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-      <div class="col p-4 d-flex flex-column position-static">
-        <!-- <strong class="d-inline-block mb-2 text-primary">World</strong> -->
-        <h3 class="mb-0"><%= @brochure.title %></h3>
-        <div class="mb-1 text-muted" style="margin: 10px 0;"><%= @brochure.start_date.to_date %> ~ <%= (@brochure.start_date + 60*60*24*(@brochure.duration-1)).to_date %> (<%= @brochure.duration %> days)</div>
-        <p class="card-text mb-auto">Public : <%= @brochure.public_flag %></p><br>
-      </div>
-      <div class="col-auto d-none d-lg-block">
-        <% if @brochure.avatar.attached? %>
-          <%= link_to image_tag(url_for(@brochure.avatar), :class => "mypage_brochure_image"), @brochure %>
-        <% else %>
-        <div class="mypage_brochure_no_image"></div>
-        <% end %>
-      </div>
-    </div>
-
-    <% if user_signed_in? %>
-      <% if @members.find_by(user_id: current_user.id) %>
-        <div class="days row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-          <div class="col p-4 d-flex flex-column position-static">
-            <div class="members" style="margin: 20px 0 40px 0;">
-                <h2>メンバー</h2>
-                <% @members.each.with_index(1) do |member, n| %>
-                <div class="member">
-                  <%= n %> :
-                  <%= member.user.email %><br>
-                </div>
-                <% end %>
-            </div>
-          </div>
+  <div class="row">
+    <div class="col">
+      <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <!-- <strong class="d-inline-block mb-2 text-primary">World</strong> -->
+          <h3 class="mb-0"><%= @brochure.title %></h3>
+          <div class="mb-1 text-muted" style="margin: 10px 0;"><%= @brochure.start_date.to_date %> ~ <%= (@brochure.start_date + 60*60*24*(@brochure.duration-1)).to_date %> (<%= @brochure.duration %> days)</div>
+          <p class="card-text mb-auto">Public : <%= @brochure.public_flag %></p><br>
         </div>
-      <% end %>
-    <% end %>
-
-
-    <div class="days row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-      <div class="col p-4 d-flex flex-column position-static">
-        <h2 id="btn_all_days">スケジュール</h2>
-        <% next_time = [] %>
-        <% @days.each.with_index do |day, n| %>
-          <div class="day" style="margin: 25px 0;">
-            <%= content_tag :h3, "#{n+1} 日目", id:"btn_days_#{day.id}", data: {'day-id'=>day.id}, style:"display:inline; margin:0 70px 0 0;" %>
-            <%= day.start_time %>
-            <% spots = day.spots.order(position: :asc) %>
-            <% spots.each.with_index do |spot, i| %>
-              <div class="time_required col d-flex flex-column position-static">
-                <% if i != 0 %>
-                  <% if @durations[n][i-1] >= 60 %>
-                    <% duration_hour = @durations[n][i-1].to_i / 60 %>
-                    <% duration_min = @durations[n][i-1].to_i - duration_hour * 60 %>
-                    <% duration_display = duration_hour.to_s + "時間" + duration_min.to_s + "分" %>
-                  <% else %>
-                    <% duration_display = @durations[n][i-1].to_s + "分" %>
-                  <% end %>
-                  ■ 移動時間 : <%= duration_display %>
-                <% end %>
-              </div>
-              <div class="spot field col d-flex flex-column position-static" style="margin: 25px 0 25px 0">
-                順番 : <%= spot.position %><br>
-                <% if i == 0 %>
-                  開始時間 : <%= day.start_time %><br>
-                  終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
-                <% else %>
-                  開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
-                  終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
-                <% end %>
-                location : <%= spot.location_name %><br>
-                所要時間 : <%= spot.stay_time %>分<br>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
-
-        <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
-          async defer></script>
-
-        <br>
-        <br>
-
+        <div class="col-auto d-none d-lg-block">
+          <% if @brochure.avatar.attached? %>
+            <%= link_to image_tag(url_for(@brochure.avatar), :class => "mypage_brochure_image"), @brochure %>
+          <% else %>
+          <div class="mypage_brochure_no_image"></div>
+          <% end %>
+        </div>
       </div>
-    </div>
-    <div class="btn-group" >
+
       <% if user_signed_in? %>
         <% if @members.find_by(user_id: current_user.id) %>
-          <%= link_to 'Edit', edit_brochure_path(@brochure), :class=>"btn btn-sm btn-outline-secondary" %>
-          <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-sm btn-outline-secondary" %>
+          <div class="days row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+            <div class="col p-4 d-flex flex-column position-static">
+              <div class="members" style="margin: 20px 0 40px 0;">
+                  <h2>メンバー</h2>
+                  <% @members.each.with_index(1) do |member, n| %>
+                  <div class="member">
+                    <%= n %> :
+                    <%= member.user.email %><br>
+                  </div>
+                  <% end %>
+              </div>
+            </div>
+          </div>
         <% end %>
       <% end %>
-      <%= link_to 'Back', "/", :class=>"btn btn-sm btn-outline-secondary" %>
+
+
+      <div class="days row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <h2 id="btn_all_days">スケジュール</h2>
+          <% next_time = [] %>
+          <% @days.each.with_index do |day, n| %>
+            <div class="day" style="margin: 25px 0;">
+              <%= content_tag :h3, "#{n+1} 日目", id:"btn_days_#{day.id}", data: {'day-id'=>day.id}, style:"display:inline; margin:0 70px 0 0;" %>
+              <%= day.start_time %>
+              <% spots = day.spots.order(position: :asc) %>
+              <% spots.each.with_index do |spot, i| %>
+                <div class="time_required col d-flex flex-column position-static">
+                  <% if i != 0 %>
+                    <% if @durations[n][i-1] >= 60 %>
+                      <% duration_hour = @durations[n][i-1].to_i / 60 %>
+                      <% duration_min = @durations[n][i-1].to_i - duration_hour * 60 %>
+                      <% duration_display = duration_hour.to_s + "時間" + duration_min.to_s + "分" %>
+                    <% else %>
+                      <% duration_display = @durations[n][i-1].to_s + "分" %>
+                    <% end %>
+                    ■ 移動時間 : <%= duration_display %>
+                  <% end %>
+                </div>
+                <div class="spot field col d-flex flex-column position-static" style="margin: 25px 0 25px 0">
+                  順番 : <%= spot.position %><br>
+                  <% if i == 0 %>
+                    開始時間 : <%= day.start_time %><br>
+                    終了時間 : <%= next_time[i] = day.start_time + spot.stay_time.to_i * 60 %><br>
+                  <% else %>
+                    開始時間 : <%= next_time[i-1] + @durations[n][i-1] * 60 %><br>
+                    終了時間 : <%= next_time[i] = next_time[i-1] + @durations[n][i-1] * 60 + spot.stay_time.to_i * 60 %><br>
+                  <% end %>
+                  location : <%= spot.location_name %><br>
+                  所要時間 : <%= spot.stay_time %>分<br>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+
+          <script src="https://maps.googleapis.com/maps/api/js?key=<%= Rails.application.credentials.google_map_key %>&libraries=places&callback=initMap"
+            async defer></script>
+
+          <br>
+          <br>
+
+        </div>
+      </div>
+      <div class="btn-group" >
+        <% if user_signed_in? %>
+          <% if @members.find_by(user_id: current_user.id) %>
+            <%= link_to 'Edit', edit_brochure_path(@brochure), :class=>"btn btn-sm btn-outline-secondary" %>
+            <%= link_to 'Destroy', @brochure, method: :delete, data: { confirm: 'Are you sure?' }, :class=>"btn btn-sm btn-outline-secondary" %>
+          <% end %>
+        <% end %>
+        <%= link_to 'Back', "/", :class=>"btn btn-sm btn-outline-secondary" %>
+      </div>
+    </div>
+    <div class="col">
+      <div class="fixed-map">
+        <div id="map"></div>
+      </div>
     </div>
   </div>
-  <div id="map" class="brochure-right"></div>
 </div>

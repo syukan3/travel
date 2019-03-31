@@ -1,34 +1,38 @@
-<h1>Editing Spot</h1>
+<div class="container" style="margin-top: 30px;">
+  <h2>Editing Spot</h2>
+  <div class="no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+    <div class="col p-4 d-flex flex-column position-static">
+      <%= form_with(model: @spot, url: brochure_day_spot_path(@brochure, @day, @spot), local: true, method: :put) do |form| %>
+        <% if @spot.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@spot.errors.count, "error") %> prohibited this spot from being saved:</h2>
 
-<%= form_with(model: @spot, url: brochure_day_spot_path(@brochure, @day, @spot), local: true, method: :put) do |form| %>
-  <% if @spot.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@spot.errors.count, "error") %> prohibited this spot from being saved:</h2>
+            <ul>
+            <% spot.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+            </ul>
+          </div>
+        <% end %>
 
-      <ul>
-      <% spot.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+        <div class="field">
+          <%= form.label :location_name %>
+          <%= form.text_field :location_name %>
+        </div>
+
+        <div class="field">
+          <%= form.label :stay_time %>
+          <%= form.number_field :stay_time %>
+        </div>
+
+        <br>
+
+        <div class="actions">
+          <%= form.submit %>
+        </div>
+
       <% end %>
-      </ul>
     </div>
-  <% end %>
-
-  <div class="field">
-    <%= form.label :location_name %>
-    <%= form.text_field :location_name %>
   </div>
-
-  <div class="field">
-    <%= form.label :stay_time %>
-    <%= form.number_field :stay_time %>
-  </div>
-
-  <br>
-
-  <div class="actions">
-    <%= form.submit %>
-  </div>
-
-<% end %>
-
-<%= link_to 'Back', edit_brochure_path(@brochure) %>
+  <%= link_to 'Back', edit_brochure_path(@brochure) %>
+</div>

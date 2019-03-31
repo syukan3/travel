@@ -2,9 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+.fixed-map {
+  width: 100%;
+  position: fixed;
+}
+
 #map {
-  width: 600px;
-  height: 610px;
+  width: 40%;
+  height: 93vh;
 }
 
 .wrapper {
@@ -13,9 +18,7 @@
 
 .brochure-left {
   float: left;
-  width: 100%;
-  margin-right: -600px;
-  padding-right: 600px;
+  width: 50%;
   box-sizing: border-box;
 }
 
