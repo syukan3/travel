@@ -86,6 +86,94 @@ function setMarkerDays(map, numBtnDay) {
   });
 }
 
+function newMap(position) {
+  var lat = !!position ? position.coords.latitude : 35.681236
+  var lng = !!position ? position.coords.longitude : 139.767125
+  return new google.maps.Map(document.getElementById('map'), {
+    center: {
+      lat: lat,
+      lng: lng
+    },
+    zoom: 15
+  });
+}
+
+function initializeMap(map) {
+  var btnAllDays = document.getElementById("btn_all_days");
+  btnAllDays.addEventListener('click', function() {
+    setMarkerAllDays(map);
+  });
+
+  var btnDays = document.querySelectorAll('[id^=btn_days_]');
+  btnDays.forEach(function(btnDay, numBtnDay) {
+    btnDay.addEventListener('click', function() {
+      setMarkerDays(map, numBtnDay);
+    });
+  });
+
+  // Auto complete
+  var spots = document.querySelectorAll('[id^=spot_day_]');
+  spots.forEach(function(spot) {
+    var autocompleteSpot = new google.maps.places.Autocomplete(spot);
+    autocompleteSpot.bindTo('bounds', map);
+    // Set the data fields to return when the user selects a place.
+    autocompleteSpot.setFields(['address_components', 'geometry', 'icon', 'name']);
+
+    autocompleteSpot.addListener('place_changed', function() {
+      var place = autocompleteSpot.getPlace();
+      document.getElementById('spot_lat_'+spot.dataset.dayId).value = place.geometry.location.lat();
+      document.getElementById('spot_lng_'+spot.dataset.dayId).value = place.geometry.location.lng();
+      if (!place.geometry) {
+        window.alert("No details available for input: '" + place.name + "'");
+        return;
+      }
+      markers.push(new google.maps.Marker({
+        position: place.geometry.location,
+        map: map,
+        animation: google.maps.Animation.DROP
+      }));
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(15);  // Why 17? Because it looks good.
+      }
+    });
+  });
+
+  // Set markers when user touches maps
+  var marker;
+
+  map.addListener('click', function(e) {
+    marker = new google.maps.Marker({
+      position: e.latLng,
+      map: map,
+      animation: google.maps.Animation.DROP
+    });
+
+    var wantDay = [];
+    btnDays.forEach(function(btnDay, numBtnDay) {
+      var dayId = btnDays[numBtnDay].dataset.dayId;
+      var day = numBtnDay + 1;
+      var params = {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng(),
+        day_id: dayId
+      }
+      wantDay[numBtnDay] = "<ol onclick='doPost(" + JSON.stringify(params) + ")'>"+ day +"日目</ol>";
+    });
+    var olWantDay = wantDay.join('');
+
+    var infoWindow = new google.maps.InfoWindow({
+      // content: e.latLng.toString() + "<ul><li>いきたい場所<ol onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>1日目</ol></li><li>マーカーを外す</li></ul>"
+      content: e.latLng.toString() + "<ul><li>いきたい場所" + olWantDay + "</li><li>マーカーを外す</li></ul>"
+    });
+    marker.addListener('click', function() {
+      infoWindow.open(map, marker);
+    });
+  });
+}
+
 // var markers = [];
 function initMap() {
   if (!navigator.geolocation) {
@@ -93,89 +181,11 @@ function initMap() {
     return;
   }
 
-  // current location
   navigator.geolocation.getCurrentPosition(function(position) {
-    var map = new google.maps.Map(document.getElementById('map'), {
-      center: {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      },
-      zoom: 15
-    });
-
-    var btnAllDays = document.getElementById("btn_all_days");
-    btnAllDays.addEventListener('click', function() {
-      setMarkerAllDays(map);
-    });
-
-    var btnDays = document.querySelectorAll('[id^=btn_days_]');
-    btnDays.forEach(function(btnDay, numBtnDay) {
-      btnDay.addEventListener('click', function() {
-        setMarkerDays(map, numBtnDay);
-      });
-    });
-
-    // Auto complete
-    var spots = document.querySelectorAll('[id^=spot_day_]');
-    spots.forEach(function(spot) {
-      var autocompleteSpot = new google.maps.places.Autocomplete(spot);
-      autocompleteSpot.bindTo('bounds', map);
-      // Set the data fields to return when the user selects a place.
-      autocompleteSpot.setFields(['address_components', 'geometry', 'icon', 'name']);
-
-      autocompleteSpot.addListener('place_changed', function() {
-        var place = autocompleteSpot.getPlace();
-        document.getElementById('spot_lat_'+spot.dataset.dayId).value = place.geometry.location.lat();
-        document.getElementById('spot_lng_'+spot.dataset.dayId).value = place.geometry.location.lng();
-        if (!place.geometry) {
-          window.alert("No details available for input: '" + place.name + "'");
-          return;
-        }
-        markers.push(new google.maps.Marker({
-          position: place.geometry.location,
-          map: map,
-          animation: google.maps.Animation.DROP
-        }));
-        if (place.geometry.viewport) {
-          map.fitBounds(place.geometry.viewport);
-        } else {
-          map.setCenter(place.geometry.location);
-          map.setZoom(15);  // Why 17? Because it looks good.
-        }
-      });
-    });
-
-    // Set markers when user touches maps
-    var marker;
-
-    map.addListener('click', function(e) {
-      marker = new google.maps.Marker({
-        position: e.latLng,
-        map: map,
-        animation: google.maps.Animation.DROP
-      });
-
-
-      var wantDay = [];
-      btnDays.forEach(function(btnDay, numBtnDay) {
-        var dayId = btnDays[numBtnDay].dataset.dayId;
-        var day = numBtnDay + 1;
-        var params = {
-          lat: e.latLng.lat(),
-          lng: e.latLng.lng(),
-          day_id: dayId
-        }
-        wantDay[numBtnDay] = "<ol onclick='doPost(" + JSON.stringify(params) + ")'>"+ day +"日目</ol>";
-      });
-      var olWantDay = wantDay.join('');
-
-      var infoWindow = new google.maps.InfoWindow({
-        // content: e.latLng.toString() + "<ul><li>いきたい場所<ol onclick='setDeparture(" +  e.latLng.lat() + ', ' + e.latLng.lng() + ")'>1日目</ol></li><li>マーカーを外す</li></ul>"
-        content: e.latLng.toString() + "<ul><li>いきたい場所" + olWantDay + "</li><li>マーカーを外す</li></ul>"
-      });
-      marker.addListener('click', function() {
-        infoWindow.open(map, marker);
-      });
-    });
+    var map = newMap(position);
+    initializeMap(map);
+  }, function() {
+    var map = newMap();
+    initializeMap(map);
   });
 }
